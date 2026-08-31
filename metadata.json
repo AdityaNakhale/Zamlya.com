@@ -1,0 +1,6 @@
+{
+  "name": "Zamlya.com — Developer Portfolios & Technical Shorts Stream",
+  "description": "Technical engineering portfolios, full-stack systems architecture, and curated technical walkthroughs stream for Zamlya.com.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

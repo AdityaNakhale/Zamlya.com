@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zamlya.com — Developer Portfolios & Technical Shorts Stream</title>
+
+  <!-- External Stylesheets & Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            surface: {
+              DEFAULT: '#090909',
+              card: '#121212',
+              elevated: '#171717',
+              border: 'rgba(255, 255, 255, 0.08)',
+              borderHover: 'rgba(255, 255, 255, 0.22)'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      background-color: #090909;
+      color: #ededed;
+      overflow-x: hidden;
+    }
+
+    /* Minimalist Dark Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090909;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #262626;
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3d3d3d;
+    }
+
+    /* Glassmorphism Styling */
+    .glass-card {
+      background: rgba(18, 18, 18, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    /* 3D Gate Animation System */
+    .gate-container {
+      perspective: 1600px;
+      transform-style: preserve-3d;
+    }
+
+    .gate-card-wrapper {
+      opacity: 0;
+      transform: translateY(35px) scale(0.98);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .gate-card-wrapper.gate-active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .gate-door-left,
+    .gate-door-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50.5%;
+      z-index: 30;
+      background: linear-gradient(135deg, #181818 0%, #111111 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backface-visibility: hidden;
+      transition: transform 1.1s cubic-bezier(0.2, 0.85, 0.3, 1), opacity 0.9s ease;
+      pointer-events: none;
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.85);
+    }
+
+    .gate-door-left {
+      left: 0;
+      transform-origin: left center;
+      border-right: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .gate-door-right {
+      right: 0;
+      transform-origin: right center;
+      border-left: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .gate-card-wrapper.gate-active .gate-door-left {
+      transform: rotateY(-115deg);
+      opacity: 0;
+    }
+
+    .gate-card-wrapper.gate-active .gate-door-right {
+      transform: rotateY(115deg);
+      opacity: 0;
+    }
+
+    .editorial-grid-bg {
+      background-size: 32px 32px;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+  </style>
+</head>
+
+<body class="bg-[#090909] text-[#eaeaea] font-sans antialiased selection:bg-neutral-800 selection:text-white">
+
+<header class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-surface-border">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <!-- Brand Logo -->
+    <a href="#hero" class="flex items-center gap-3 group">
+      <div class="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-700 flex items-center justify-center font-mono font-bold text-sm text-neutral-200 group-hover:border-neutral-500 transition-all">
+        Z
+      </div>
+      <div class="flex flex-col">
+        <span class="font-bold text-base tracking-tight text-neutral-100">Zamlya<span class="text-neutral-500 font-normal">.com</span></span>
+      </div>
+    </a>
+
+    <!-- Navigation Links -->
+    <nav class="hidden md:flex items-center gap-8 text-xs uppercase tracking-widest text-neutral-400 font-medium">
+      <a href="#hero" class="hover:text-white transition-colors">Home</a>
+      <a href="#profiles" class="hover:text-white transition-colors">Profiles</a>
+      <a href="#shorts" class="hover:text-white transition-colors flex items-center gap-1.5">
+        <i class="fa-brands fa-youtube text-red-500 text-xs"></i> Shorts Feed
+      </a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2.5">
+      <button data-open-modal="0" class="px-3.5 py-1.5 rounded-lg text-xs font-mono bg-neutral-900 border border-surface-border hover:border-surface-borderHover text-neutral-300 hover:text-white transition-all flex items-center gap-1.5">
+        <i class="fa-solid fa-file-lines text-neutral-400"></i> View Developer CV
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="relative pt-16">
+
+  <section id="hero" class="relative py-24 sm:py-32 px-6 border-b border-surface-border overflow-hidden editorial-grid-bg">
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/90 border border-surface-border text-neutral-400 text-xs font-mono mb-8">
+        <span class="w-2 h-2 rounded-full bg-neutral-400 animate-pulse"></span>
+        Technical Engineering Portfolios & Code Stream
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        Zamlya<span class="text-neutral-500">.com</span>
+      </h1>
+
+      <p class="text-lg sm:text-xl text-neutral-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+        Engineering portfolios, full-stack systems architecture, and curated technical walkthroughs.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-neutral-400">
+        <a href="#profiles" class="px-4 py-2 rounded-xl bg-neutral-900/80 border border-surface-border flex items-center gap-2 hover:border-neutral-500 hover:text-white transition-all">
+          <i class="fa-solid fa-users text-neutral-400"></i>
+          <span>Developer Profiles</span>
+        </a>
+        <a href="#shorts" class="px-4 py-2 rounded-xl bg-neutral-900/80 border border-surface-border flex items-center gap-2 hover:border-neutral-500 hover:text-white transition-all">
+          <i class="fa-brands fa-youtube text-red-500"></i>
+          <span>YouTube Shorts (58 Videos)</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="profiles" class="relative py-28 px-6 max-w-5xl mx-auto border-b border-surface-border overflow-hidden">
+    <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 font-mono text-xs mb-3">
+          <i class="fa-solid fa-file-csv text-emerald-400 text-[11px]"></i> Dynamic CSV Profiles
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white">Developer Profiles</h2>
+        <p class="text-neutral-400 text-sm mt-2 max-w-lg">
+          Interactive developer dossiers with 3D gate reveals and comprehensive CV modals rendered directly from CSV.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2.5 self-start md:self-auto">
+        <button
+          id="btn-add-profile"
+          class="px-3.5 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black font-semibold text-xs font-mono flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+        >
+          <i class="fa-solid fa-user-plus text-xs"></i> + Add Profile
+        </button>
+        <button
+          id="btn-open-csv"
+          class="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border hover:border-surface-borderHover text-xs font-mono text-neutral-300 flex items-center gap-1.5 transition-all"
+        >
+          <i class="fa-solid fa-table text-neutral-400"></i> Manage CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic Profile Cards Container -->
+    <div id="profiles-container" class="gate-container relative z-10 space-y-12">
+      <!-- Injected via JavaScript -->
+    </div>
+  </section>
+
+  <section id="shorts" class="py-24 px-6 max-w-7xl mx-auto border-b border-surface-border">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/40 border border-red-900/40 text-red-400 font-mono text-xs mb-3">
+          <i class="fa-brands fa-youtube text-red-500 text-sm"></i> Auto-Synced Shorts Feed
+        </div>
+        <h2 class="text-3xl font-bold tracking-tight text-white">Student & Tech Shorts</h2>
+        <p class="text-neutral-400 text-sm mt-2 max-w-xl">
+          Complete stream of 58 curated technical shorts. Any valid YouTube link automatically syncs high-resolution thumbnails, titles, and engagement stats.
+        </p>
+      </div>
+
+      <button
+        id="btn-open-shorts-csv"
+        class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border hover:border-surface-borderHover text-xs font-mono text-neutral-300 flex items-center gap-2 transition-all self-start md:self-auto"
+      >
+        <i class="fa-solid fa-sliders text-red-400"></i> Manage Shorts Sheet
+      </button>
+    </div>
+
+    <!-- Responsive Multi-Column Grid for Shorts -->
+    <div id="shorts-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <div class="mt-16 p-6 rounded-2xl glass-card flex flex-col sm:flex-row items-center justify-between gap-6 border border-surface-border">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-red-600/10 border border-red-500/20 flex items-center justify-center text-red-500 text-2xl">
+          <i class="fa-brands fa-youtube"></i>
+        </div>
+        <div>
+          <h4 class="text-base font-bold text-white">Subscribe to Zamlya Tech Channel</h4>
+          <p class="text-xs text-neutral-400 font-light">Watch upcoming technical shorts, architectural breakdowns, and coding tips.</p>
+        </div>
+      </div>
+      <a
+        href="https://youtube.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="px-5 py-2.5 rounded-xl bg-neutral-100 hover:bg-white text-black font-semibold text-xs tracking-wide transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap"
+      >
+        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Watch Full Channel
+      </a>
+    </div>
+  </section>
+
+  <footer class="border-t border-surface-border py-12 px-6 bg-[#080808]">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+        <div class="w-7 h-7 rounded bg-neutral-900 border border-neutral-700 flex items-center justify-center font-mono text-xs font-bold text-neutral-300">
+          Z
+        </div>
+        <div>
+          <p class="text-xs text-neutral-400">
+            &copy; 2026 Zamlya.com — Engineering Profiles & Technical Stream.
+          </p>
+          <p class="text-[11px] font-mono text-neutral-500 mt-0.5">
+            Website Developed & Engineered by <a href="javascript:void(0)" onclick="const btn = document.querySelector('[data-open-modal=\'2\']'); if(btn) btn.click();" class="text-neutral-300 hover:text-emerald-400 transition-colors underline underline-offset-2 decoration-neutral-700">Aditya Suresh Nakhale</a>
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-6 text-xs text-neutral-500 font-mono">
+        <a href="#hero" class="hover:text-white transition-colors">Home</a>
+        <span>&bull;</span>
+        <a href="#profiles" class="hover:text-white transition-colors">Profiles</a>
+        <span>&bull;</span>
+        <a href="#shorts" class="hover:text-white transition-colors">Shorts</a>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<div id="resume-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  <div class="relative w-full max-w-3xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-10 my-8 text-neutral-200">
+    <div class="flex items-center justify-between pb-6 border-b border-surface-border mb-6">
+      <div id="modal-tabs-container" class="flex flex-wrap items-center gap-2 p-1 rounded-xl bg-neutral-900/80 border border-surface-border text-xs font-mono">
+        <!-- Rendered dynamically -->
+      </div>
+      <button data-close-modal class="w-9 h-9 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white hover:border-neutral-500 flex items-center justify-center transition-all">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <div id="modal-cv-container" class="space-y-6 text-sm">
+      <!-- Rendered dynamically -->
+    </div>
+
+    <div class="mt-8 pt-4 border-t border-surface-border flex justify-end">
+      <button data-close-modal class="px-5 py-2 rounded-lg bg-neutral-900 border border-surface-border text-neutral-300 hover:text-white text-xs font-mono transition-colors">
+        Close Window
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="add-profile-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  <div class="relative w-full max-w-2xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-8 my-8 text-neutral-200">
+    <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-5">
+      <div>
+        <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-emerald-400 text-base"></i> Add New Profile Card
+        </h3>
+        <p class="text-xs text-neutral-400 font-mono mt-1">Append a new developer card & CV dossier instantly.</p>
+      </div>
+      <button id="btn-close-add-profile" class="w-8 h-8 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center transition-all">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+    <form id="add-profile-form" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Full Name *</label>
+          <input type="text" id="new-name" required placeholder="e.g. Alex Rivera" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Role Tag (Gate Banner) *</label>
+          <input type="text" id="new-role-tag" required placeholder="e.g. FULL STACK ENG" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500 uppercase" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Subtitle / Headline *</label>
+          <input type="text" id="new-subtitle" required placeholder="e.g. Senior Software Engineer • Zamlya.com" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Badge Text</label>
+          <input type="text" id="new-badge" placeholder="e.g. 5★ Certified" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-neutral-400 mb-1">Bio / Professional Summary *</label>
+        <textarea id="new-bio" rows="3" required placeholder="Professional summary and technical background..." class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Focus Area</label>
+          <input type="text" id="new-focus" placeholder="e.g. Cloud & Distributed Systems" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Skills (Comma-separated)</label>
+          <input type="text" id="new-skills" placeholder="Java, Python, Spring Boot, MySQL" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Featured Project 1 Title</label>
+          <input type="text" id="new-p1-title" placeholder="Project Name" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Project 1 Description</label>
+          <input type="text" id="new-p1-desc" placeholder="Brief project overview" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Featured Project 2 Title</label>
+          <input type="text" id="new-p2-title" placeholder="Project Name" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Project 2 Description</label>
+          <input type="text" id="new-p2-desc" placeholder="Brief project overview" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Email</label>
+          <input type="email" id="new-email" placeholder="name@domain.com" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Phone</label>
+          <input type="text" id="new-phone" placeholder="+91 XXXXXXXXXX" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Location</label>
+          <input type="text" id="new-location" placeholder="City, Country" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">Portrait Image URL</label>
+          <input type="url" id="new-image" placeholder="https://..." class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">GitHub URL</label>
+          <input type="url" id="new-github" placeholder="https://github.com/username" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-mono text-neutral-400 mb-1">LinkedIn URL</label>
+          <input type="url" id="new-linkedin" placeholder="https://linkedin.com/in/username" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-neutral-500" />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-surface-border">
+        <button type="button" id="btn-cancel-add-profile" class="px-4 py-2 rounded-xl bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-400 hover:text-white transition-colors">
+          Cancel
+        </button>
+        <button type="submit" class="px-5 py-2 rounded-xl bg-white text-black font-semibold text-xs font-mono hover:bg-neutral-200 transition-all">
+          Save & Add Card
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="csv-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  <div class="relative w-full max-w-3xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-8 my-8 text-neutral-200">
+    <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-4">
+      <div>
+        <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+          <i class="fa-solid fa-table text-emerald-400 text-base"></i> Manage Profiles CSV
+        </h3>
+        <p class="text-xs text-neutral-400 font-mono mt-1">Upload a .csv file or edit raw values directly below.</p>
+      </div>
+      <button id="btn-close-csv" class="w-8 h-8 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center transition-all">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-xs font-mono text-neutral-400 mb-2">Import from Local File (.csv)</label>
+      <input type="file" id="csv-file-input" accept=".csv,text/csv" class="block w-full text-xs font-mono text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-800 cursor-pointer border border-surface-border rounded-xl p-1 bg-neutral-950/60" />
+    </div>
+
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs font-mono text-neutral-400">Raw CSV Editor</label>
+        <button id="btn-reset-csv" class="text-[11px] font-mono text-neutral-500 hover:text-red-400 transition-colors">
+          Reset to Defaults
+        </button>
+      </div>
+      <textarea id="csv-raw-input" rows="8" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 font-mono text-xs text-neutral-300 focus:outline-none focus:border-neutral-500 resize-y" placeholder="Paste CSV data here..."></textarea>
+    </div>
+
+    <div class="flex items-center justify-between pt-4 border-t border-surface-border">
+      <button id="btn-download-csv" class="px-3.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white flex items-center gap-1.5 transition-all">
+        <i class="fa-solid fa-download text-neutral-400"></i> Download CSV
+      </button>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-cancel-csv" class="px-4 py-2 rounded-lg bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-400 hover:text-white transition-colors">
+          Cancel
+        </button>
+        <button id="btn-save-csv" class="px-5 py-2 rounded-lg bg-white text-black font-semibold text-xs font-mono hover:bg-neutral-200 transition-all">
+          Save & Render Profiles
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="shorts-csv-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  <div class="relative w-full max-w-3xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-8 my-8 text-neutral-200">
+    <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-4">
+      <div>
+        <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+          <i class="fa-brands fa-youtube text-red-500 text-base"></i> Manage YouTube Shorts Sheet
+        </h3>
+        <p class="text-xs text-neutral-400 font-mono mt-1">Upload a .csv file or edit your sheet dataset (url, author, title, views, likes) below.</p>
+      </div>
+      <button id="btn-close-shorts-csv" class="w-8 h-8 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center transition-all">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-xs font-mono text-neutral-400 mb-2">Import from Local File (.csv)</label>
+      <input type="file" id="shorts-file-input" accept=".csv,text/csv" class="block w-full text-xs font-mono text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-neutral-900 file:text-white hover:file:bg-neutral-800 cursor-pointer border border-surface-border rounded-xl p-1 bg-neutral-950/60" />
+    </div>
+
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs font-mono text-neutral-400">Raw Shorts CSV Data</label>
+        <button id="btn-reset-shorts-csv" class="text-[11px] font-mono text-neutral-500 hover:text-red-400 transition-colors">
+          Reset to 58 Defaults
+        </button>
+      </div>
+      <textarea id="shorts-raw-input" rows="8" class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 font-mono text-xs text-neutral-300 focus:outline-none focus:border-neutral-500 resize-y" placeholder="url,author,title,views,likes"></textarea>
+    </div>
+
+    <div class="flex items-center justify-between pt-4 border-t border-surface-border">
+      <button id="btn-download-shorts-csv" class="px-3.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white flex items-center gap-1.5 transition-all">
+        <i class="fa-solid fa-download text-neutral-400"></i> Download CSV
+      </button>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-cancel-shorts-csv" class="px-4 py-2 rounded-lg bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-400 hover:text-white transition-colors">
+          Cancel
+        </button>
+        <button id="btn-save-shorts-csv" class="px-5 py-2 rounded-lg bg-white text-black font-semibold text-xs font-mono hover:bg-neutral-200 transition-all">
+          Save & Render Shorts
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ==========================================================================
+     1. DEFAULT PROFILES CSV DATASET (Parth Khadke, Ritesh Janwade, Aditya Nakhale)
+     ========================================================================== */
+  const DEFAULT_CSV = `gate_id,gate_tag,role_tag,name,subtitle,bio,image_url,badge_text,focus_area,skills,proj1_title,proj1_desc,proj2_title,proj2_desc,location,email,phone,education,certifications,github,linkedin
+01,GATE_01,FOUNDER & DEV,Parth Khadke,Founder & Software Developer • Zamlya.com,"Motivated and detail-oriented BCA graduate with a strong foundation in Python, web development, SQL, and software engineering principles. Proficient in HTML, CSS, JavaScript, MySQL, and Git with hands-on experience building responsive web applications.","img/Parth.jpeg",Founder,Python & Full Stack,"Python, JavaScript, HTML5, CSS3, MySQL, Git, GitHub, REST APIs",SkillForge AI,"AI-assisted personal skill development roadmap for computer science skills with API implementation.",AlphabetNinja,"Typing game with real-world physics built using Java and Swing.","Amravati, Maharashtra 444607",parthkhadke720@gmail.com,+91 7083994890,"BCA (2023–2026 | CGPA 7.09) Sri Brijlal Biyani Science College; 12th HSC CS (68%); 10th SSC (94.20%)","EF SET C2 Proficient (75/100); HackerRank Python (Basic); MS-CIT (84/100); Global AI Bootcamp 2025",https://github.com,https://linkedin.com
+02,GATE_02,CO-FOUNDER & JAVA ENG,Ritesh Vilas Janwade,Co-Founder & Spring Boot / Java Developer • Zamlya.com,"Aspiring Java developer pursuing BCA with strong skills in Core Java, Advanced Java, Object-Oriented Programming (OOP), and problem-solving. Completed backend internship in Spring Boot, Spring MVC, and JPA/Hibernate building scalable production web applications.","img/Ritesh.webp",5★ HackerRank Java,Java & Spring Boot,"Core Java, Advanced Java, Spring Boot, Spring MVC, JPA / Hibernate, MySQL, JSP / Servlets, C++",Spring Boot Intern (JK Innovative),"Built backend modules with Spring MVC, Dependency Injection & JPA/Hibernate for live services.",Food Rescue AI & Portfolio,"Data-driven matching engine for food donor networks & full-stack Java MVC Student Career Portfolio generator.","Amravati, Maharashtra",riteshjanwade10@gmail.com,+91 84595 43930,"BCA 3rd Year (Pursuing) Brijlal Biyani Science College (SGBAU); HSC Science (77.67%); SSC 10th (64.40%)","5 Stars HackerRank Java; HackerRank Certified Java Basic 2026; Google Analytics Certified (2025); JK Innovative Java (2025); Global AI Bootcamp Attendee (2025)",https://github.com,https://linkedin.com/in/ritesh-janwade-aa317135a
+03,GATE_03,CEO & BACKEND ENG,Aditya Suresh Nakhale,CEO & Backend Developer • Zamlya.com,"2026 BCA graduate and backend developer intern with hands-on experience building REST APIs, MVC services, and full-stack systems for live production applications. Built and shipped Prisma/PostgreSQL data layers and Node/Nest/Next web apps serving 1,000+ users.","img/Aditya.jpg",Google Cloud Arcade,Backend & Distributed APIs,"Java, Node.js, Nest.js, Next.js, PostgreSQL, Prisma ORM, Spring Boot, REST APIs",Backend Intern (JK Innovative),"Reduced database query latency by 30% via Prisma ORM; served 1,000+ users on Next.js/Nest.js.",Food Rescue AI & Portfolio,"Full-stack food donation & NGO matching platform with Google Maps APIs & 4-stage lifecycle tracking.","Amravati, India",adityanakhale0@gmail.com,+91 93224 85330,"BCA (2023–2026 | CGPA 6.5) Sant Gadge Baba Amravati University; 12th HSC (63.33%); 10th SSC (73.40%)","Google Cloud Arcade Participant (skills.google/public_profiles/64a46582); 1st Prize College Coding Competition",https://github.com/AdityaNakhale,https://linkedin.com/in/aditya-nakhale-a63b67319
+04,GATE_04,MARKETING & SEO,Raghav Deole,SEO Specialist & Digital Marketing • Zamlya.com,"Motivated Digital Marketing & SEO Fresher with hands-on knowledge of On-Page SEO, Off-Page SEO, Technical SEO, Local SEO, Keyword Research, Content Optimization, Link Building, and Google Search Console. Dedicated to maximizing organic search rankings, site visibility, and technical crawl efficiency.","img/Raghav.jpeg",SEO Specialist,Organic Growth & SEO,"On-Page SEO, Off-Page SEO, Technical SEO, Local SEO, Keyword Research, SEO Audit, Link Building, Content Optimization, Google Search Console, Google Business Profile, Excel",SEO Optimization for Business Websites,"Performed keyword research, optimized meta tags, improved internal linking, sitemaps, and GSC indexing.",Off-Page & Local SEO Strategies,"Built high-authority backlinks, directory & citation submissions, and Google Business Profile optimization.","Yavatmal, Maharashtra, India",raghavdeole89@gmail.com,+91 9881985600,"BCA Computer Science (Brijlal Biyani Science College); Higher Secondary 12th (The English High School)","SEO Intern at Itorix Infotech; Google Search Console; Local SEO & Citation Specialist; Multilingual (English, Hindi, Marathi)",https://github.com,https://linkedin.com`;
+
+  /* ==========================================================================
+     2. DEFAULT 58 YOUTUBE SHORTS CSV DATASET
+     ========================================================================== */
+  const DEFAULT_SHORTS_CSV = `url,author,title,views,likes
+https://youtube.com/shorts/Aa12Z6SQGqk?feature=share,@zamlyateam,,148K,18.4K
+https://youtube.com/shorts/kfRAl0kHwF4?feature=share,@zamlyateam,,92K,11.2K
+https://youtube.com/shorts/cAqsaw3aacU?feature=share,@zamlyateam,,210K,25.6K
+https://youtube.com/shorts/SI_lcNRsAyM?feature=share,@zamlyateam,,134K,16.2K
+https://youtube.com/shorts/ek8nHgD01oI?feature=share,@zamlyateam,,118K,14.5K
+https://youtube.com/shorts/T4v1Jo5OBr4?feature=share,@zamlyateam,,175K,22.1K
+https://youtube.com/shorts/Rh2hoqV7hb4?feature=share,@zamlyateam,,98K,12.0K
+https://youtube.com/shorts/SJa5znPybG4?feature=share,@zamlyateam,,156K,19.3K
+https://youtube.com/shorts/opN_6ArWg5k?feature=share,@zamlyateam,,182K,23.4K
+https://youtube.com/shorts/zectBmJHq9g?feature=share,@zamlyateam,,143K,17.8K
+https://youtube.com/shorts/WAuTTP0eLvM?feature=share,@zamlyateam,,112K,13.9K
+https://youtube.com/shorts/Qw1ujnonX9A?feature=share,@zamlyateam,,225K,28.4K
+https://youtube.com/shorts/rk9Rdgyr9t0?feature=share,@zamlyateam,,164K,20.1K
+https://youtube.com/shorts/N9XA7FDY6LI?feature=share,@zamlyateam,,130K,15.7K
+https://youtube.com/shorts/6Y47qlIIgsY?feature=share,@zamlyateam,,190K,24.0K
+https://youtube.com/shorts/tU4RyPccPC4?feature=share,@zamlyateam,,145K,18.0K
+https://youtube.com/shorts/1VvICPHdQmU?feature=share,@zamlyateam,,105K,12.8K
+https://youtube.com/shorts/efZ5Wu0xoV0?feature=share,@zamlyateam,,215K,27.3K
+https://youtube.com/shorts/3_k_4uj6-Gk?feature=share,@zamlyateam,,125K,15.2K
+https://youtube.com/shorts/5C5nj6XTlKA?feature=share,@zamlyateam,,89K,10.6K
+https://youtube.com/shorts/5CWyYR506_Y?feature=share,@zamlyateam,,168K,21.0K
+https://youtube.com/shorts/ilgWc1vzNCo?feature=share,@zamlyateam,,240K,31.2K
+https://youtube.com/shorts/Pu48Cf11mwc?feature=share,@zamlyateam,,152K,18.7K
+https://youtube.com/shorts/TJpyPBNwbrE?feature=share,@zamlyateam,,138K,16.9K
+https://youtube.com/shorts/_DAbSwBs2Fk?feature=share,@zamlyateam,,195K,24.8K
+https://youtube.com/shorts/iISZd4TLOME?feature=share,@zamlyateam,,110K,13.4K
+https://youtube.com/shorts/G8IiQ4sM2vg?feature=share,@zamlyateam,,122K,14.9K
+https://youtube.com/shorts/xj4VtRP0qgk?feature=share,@zamlyateam,,140K,17.2K
+https://youtube.com/shorts/TANNDQH_99s?feature=share,@zamlyateam,,260K,33.5K
+https://youtube.com/shorts/DqV10aHf0LI?feature=share,@zamlyateam,,180K,22.4K
+https://youtube.com/shorts/j3lEDsP-QWA?feature=share,@zamlyateam,,135K,16.5K
+https://youtube.com/shorts/jQpePR4qUw8?feature=share,@zamlyateam,,170K,21.5K
+https://youtube.com/shorts/h69SN2x6a9c?feature=share,@zamlyateam,,205K,26.1K
+https://youtube.com/shorts/ONQEyP70TXQ?feature=share,@zamlyateam,,115K,14.1K
+https://youtube.com/shorts/YuftaOv9pqY?feature=share,@zamlyateam,,230K,29.0K
+https://youtube.com/shorts/MnK4MrB89lc?feature=share,@zamlyateam,,150K,18.5K
+https://youtube.com/shorts/RpaSpKuDm9U?feature=share,@zamlyateam,,162K,20.4K
+https://youtube.com/shorts/y2KIDjZy5UM?feature=share,@zamlyateam,,95K,11.8K
+https://youtube.com/shorts/hRIJFL5BJnk?feature=share,@zamlyateam,,185K,23.1K
+https://youtube.com/shorts/14igTZWaeTY?feature=share,@zamlyateam,,128K,15.9K
+https://youtube.com/shorts/gzVij3GD0UM?feature=share,@zamlyateam,,275K,35.0K
+https://youtube.com/shorts/FAzESp7UsgQ?feature=share,@zamlyateam,,142K,17.6K
+https://youtube.com/shorts/EBHxSTznbGc?feature=share,@zamlyateam,,198K,25.2K
+https://youtube.com/shorts/Y_rX2Gl_TVU?feature=share,@zamlyateam,,160K,20.0K
+https://youtube.com/shorts/vvIIcyaAnjw?feature=share,@zamlyateam,,108K,13.2K
+https://youtube.com/shorts/O8ZRKwfYCdI?feature=share,@zamlyateam,,172K,21.8K
+https://youtube.com/shorts/tynnA--zBQM?feature=share,@zamlyateam,,155K,19.2K
+https://youtube.com/shorts/xOqPjaOYJdU?feature=share,@zamlyateam,,210K,26.7K
+https://youtube.com/shorts/yuTS1ElSSPg?feature=share,@zamlyateam,,132K,16.4K
+https://youtube.com/shorts/YgoziKq_b-0?feature=share,@zamlyateam,,245K,31.0K
+https://youtube.com/shorts/iXOOUdQAj3w?feature=share,@zamlyateam,,290K,37.5K
+https://youtube.com/shorts/VNzcWBPulEA?feature=share,@zamlyateam,,188K,23.9K
+https://youtube.com/shorts/MkLCHObgXEs?feature=share,@zamlyateam,,215K,27.8K
+https://youtube.com/shorts/aPylHaAdj0U?feature=share,@zamlyateam,,165K,20.5K
+https://youtube.com/shorts/brzaQKidzU0?feature=share,@zamlyateam,,310K,40.2K
+https://youtube.com/shorts/gn6nAqwQYBk?feature=share,@zamlyateam,,195K,24.6K
+https://youtube.com/shorts/z4lgc2H0YXI?feature=share,@zamlyateam,,178K,22.3K
+https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
+
+  function parseCSV(text) {
+    if (!text || !text.trim()) return [];
+    const lines = [];
+    let row = [''];
+    let inQuotes = false;
+    let i = 0;
+
+    while (i < text.length) {
+      const char = text[i];
+      const nextChar = text[i + 1];
+
+      if (char === '"') {
+        if (inQuotes && nextChar === '"') {
+          row[row.length - 1] += '"';
+          i += 2;
+          continue;
+        }
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        row.push('');
+      } else if ((char === '\r' || char === '\n') && !inQuotes) {
+        if (char === '\r' && nextChar === '\n') i++;
+        lines.push(row);
+        row = [''];
+      } else {
+        row[row.length - 1] += char;
+      }
+      i++;
+    }
+    if (row.length > 1 || row[0] !== '') {
+      lines.push(row);
+    }
+
+    if (lines.length < 2) return [];
+    const headers = lines[0].map(h => h.trim().toLowerCase());
+    return lines.slice(1).map(r => {
+      const entry = {};
+      headers.forEach((h, idx) => {
+        entry[h] = r[idx] !== undefined ? r[idx].trim() : '';
+      });
+      return entry;
+    });
+  }
+
+  let profilesData = [];
+  let shortsData = [];
+  let currentActiveModalTab = 0;
+
+  function renderProfiles() {
+    const container = document.getElementById('profiles-container');
+    const tabsContainer = document.getElementById('modal-tabs-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    if (tabsContainer) tabsContainer.innerHTML = '';
+
+    profilesData.forEach((profile, index) => {
+      const skillsArray = (profile.skills || '').split(',').map(s => s.trim()).filter(Boolean);
+      const skillsHTML = skillsArray.map(skill =>
+        `<span class="px-2.5 py-1 rounded bg-neutral-900 border border-surface-border">${skill}</span>`
+      ).join('');
+
+      const card = document.createElement('div');
+      card.className = 'gate-card-wrapper rounded-2xl overflow-hidden glass-card shadow-2xl transition-all duration-300 hover:border-neutral-500/50';
+      card.setAttribute('data-delay', `${index * 120}`);
+
+      card.innerHTML = `
+        <div class="gate-door-left rounded-l-2xl flex items-center justify-end pr-6">
+          <div class="flex flex-col items-end gap-1 text-right">
+            <span class="font-mono text-xs text-neutral-400 font-bold tracking-widest">${profile.gate_id || 'GATE_0' + (index + 1)}</span>
+            <span class="font-mono text-[10px] text-neutral-600 uppercase">${profile.name || 'DEVELOPER'}</span>
+          </div>
+        </div>
+
+        <div class="gate-door-right rounded-r-2xl flex items-center justify-start pl-6">
+          <div class="flex flex-col items-start gap-1 text-left">
+            <span class="font-mono text-xs text-neutral-400 font-bold tracking-widest">${profile.role_tag || 'ENGINEER'}</span>
+            <span class="font-mono text-[10px] text-neutral-600">ZAMLYA.COM</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-stretch min-h-[460px]">
+          <div class="w-full md:w-5/12 relative bg-neutral-900 min-h-[360px] md:min-h-[480px] overflow-hidden border-b md:border-b-0 md:border-r border-surface-border group">
+            <img
+              src="${profile.image_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&auto=format&fit=crop&q=80'}"
+              alt="${profile.name || 'Developer Portrait'}"
+              class="w-full h-full object-cover object-center grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700"
+              data-fallback="https://placehold.co/800x1000/141414/8a8a8a?text=${encodeURIComponent(profile.name || 'Developer')}"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-transparent via-[#121212]/30 to-[#121212]/95"></div>
+
+            <div class="absolute top-4 left-4 flex flex-col gap-2">
+              <span class="px-2.5 py-1 rounded-md bg-black/85 backdrop-blur-md border border-white/10 font-mono text-[11px] text-neutral-200">
+                0${index + 1} / Active
+              </span>
+              ${profile.badge_text ? `
+                <span class="px-2.5 py-1 rounded-md bg-neutral-950/80 border border-neutral-800 font-mono text-[10px] text-neutral-300 flex items-center gap-1.5">
+                  <i class="fa-solid fa-code-branch text-neutral-400 text-[10px]"></i> ${profile.badge_text}
+                </span>` : ''}
+            </div>
+
+            <div class="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-black/80 backdrop-blur-md border border-white/10 flex items-center justify-between text-xs font-mono text-neutral-300">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-location-dot text-neutral-500"></i> ${profile.location || 'Global / Remote'}
+              </span>
+              <span class="text-neutral-500">Zamlya Network</span>
+            </div>
+          </div>
+
+          <div class="w-full md:w-7/12 p-8 md:p-10 flex flex-col justify-between bg-[#121212]/95">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
+                <h3 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">${profile.name || 'Developer Name'}</h3>
+                <span class="px-3 py-1 rounded-full text-xs font-mono bg-neutral-900 border border-neutral-800 text-neutral-300">
+                  ${profile.focus_area || 'Engineering'}
+                </span>
+              </div>
+
+              <p class="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-3">
+                ${profile.subtitle || 'Software Engineer'}
+              </p>
+
+              <p class="text-sm text-neutral-300 font-light leading-relaxed mb-6">
+                ${profile.bio || 'Developer biography and systems background.'}
+              </p>
+
+              ${skillsHTML ? `
+              <div class="mb-6">
+                <span class="text-[11px] font-mono text-neutral-500 uppercase tracking-wider block mb-2">Verified Tech Stack</span>
+                <div class="flex flex-wrap gap-1.5 font-mono text-xs text-neutral-300">
+                  ${skillsHTML}
+                </div>
+              </div>` : ''}
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono text-neutral-400 mb-6">
+                <div class="p-3 rounded-xl bg-neutral-900/70 border border-surface-border">
+                  <div class="flex items-center justify-between text-neutral-300 font-bold mb-1">
+                    <span>${profile.proj1_title || 'Core Project'}</span>
+                    <span class="text-[10px] text-neutral-500 font-normal">Featured</span>
+                  </div>
+                  <p class="text-[11px] text-neutral-400 font-sans leading-tight">
+                    ${profile.proj1_desc || 'Production systems design and optimization.'}
+                  </p>
+                </div>
+                <div class="p-3 rounded-xl bg-neutral-900/70 border border-surface-border">
+                  <div class="flex items-center justify-between text-neutral-300 font-bold mb-1">
+                    <span>${profile.proj2_title || 'Systems Project'}</span>
+                    <span class="text-[10px] text-neutral-500 font-normal">Application</span>
+                  </div>
+                  <p class="text-[11px] text-neutral-400 font-sans leading-tight">
+                    ${profile.proj2_desc || 'Architectural components and system integrations.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs font-mono text-neutral-400 pb-2">
+                <a href="mailto:${profile.email || 'contact@zamlya.com'}" class="hover:text-white transition-colors flex items-center gap-1.5">
+                  <i class="fa-regular fa-envelope text-neutral-500"></i> ${profile.email || 'contact@zamlya.com'}
+                </a>
+                ${profile.phone ? `
+                <a href="tel:${profile.phone.replace(/\s+/g, '')}" class="hover:text-white transition-colors flex items-center gap-1.5">
+                  <i class="fa-solid fa-phone text-neutral-500"></i> ${profile.phone}
+                </a>` : ''}
+              </div>
+            </div>
+
+            <div class="pt-6 border-t border-surface-border flex flex-wrap items-center justify-between gap-4">
+              <button
+                data-open-modal="${index}"
+                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono bg-neutral-100 hover:bg-white text-black font-semibold transition-all active:scale-95"
+              >
+                <i class="fa-solid fa-arrow-down-long"></i> View Full Resume
+              </button>
+
+              <div class="flex items-center gap-2.5">
+                <a href="${profile.github || 'https://github.com'}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-lg bg-neutral-900 border border-surface-border hover:border-neutral-500 text-neutral-300 hover:text-white flex items-center justify-center transition-all" title="GitHub">
+                  <i class="fa-brands fa-github text-sm"></i>
+                </a>
+                <a href="${profile.linkedin || 'https://linkedin.com'}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-lg bg-neutral-900 border border-surface-border hover:border-neutral-500 text-neutral-300 hover:text-white flex items-center justify-center transition-all" title="LinkedIn">
+                  <i class="fa-brands fa-linkedin-in text-sm"></i>
+                </a>
+                <a href="https://zamlya.com" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-lg bg-neutral-900 border border-surface-border hover:border-neutral-500 text-neutral-300 hover:text-white flex items-center justify-center transition-all" title="Zamlya.com">
+                  <i class="fa-solid fa-globe text-sm"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+
+      if (tabsContainer) {
+        const tabBtn = document.createElement('button');
+        tabBtn.setAttribute('data-tab-index', index);
+        tabBtn.className = index === 0
+          ? 'px-3.5 py-1.5 rounded-lg transition-all font-semibold bg-neutral-100 text-black shadow-sm'
+          : 'px-3.5 py-1.5 rounded-lg transition-all text-neutral-400 hover:text-white';
+        tabBtn.textContent = profile.name ? profile.name.split(' ')[0] : `Profile ${index + 1}`;
+        tabsContainer.appendChild(tabBtn);
+      }
+    });
+
+    initGateObserver();
+    document.querySelectorAll('img[data-fallback]').forEach(handleImageFallback);
+  }
+
+  function renderShorts() {
+    const container = document.getElementById('shorts-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    shortsData.forEach((short) => {
+      const card = document.createElement('div');
+      card.className = 'w-full';
+
+      card.innerHTML = `
+        <a
+          href="${short.url || '#'}"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-yt-short
+          data-author="${short.author || '@zamlyateam'}"
+          class="group relative flex flex-col rounded-2xl overflow-hidden glass-card transition-all duration-300 hover:scale-[1.02] hover:border-neutral-500 hover:shadow-2xl hover:shadow-black/80"
+        >
+          <div class="relative aspect-[9/16] w-full overflow-hidden bg-neutral-900">
+            <img
+              src=""
+              alt="YouTube Short"
+              loading="lazy"
+              class="yt-thumb w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-black/30 to-black/60 group-hover:via-black/20 transition-all"></div>
+
+            <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/10 font-mono text-[10px] text-white">
+                <i class="fa-brands fa-youtube text-red-500"></i> Shorts
+              </span>
+              <span class="w-7 h-7 rounded-full bg-black/70 backdrop-blur-md border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-white group-hover:border-white/30 transition-all">
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              </span>
+            </div>
+
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div class="w-14 h-14 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center text-white text-lg shadow-xl group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-play ml-1"></i>
+              </div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 p-4 flex flex-col justify-end">
+              <div class="flex items-center gap-2 font-mono text-[11px] text-neutral-300 mb-2">
+                <span class="yt-views flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm border border-white/5">
+                  <i class="fa-solid fa-eye text-neutral-400 text-[10px]"></i> <span class="yt-views-val">${short.views || '...'}</span>
+                </span>
+                <span class="yt-likes flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm border border-white/5">
+                  <i class="fa-solid fa-heart text-red-400 text-[10px]"></i> <span class="yt-likes-val">${short.likes || '...'}</span>
+                </span>
+              </div>
+              <h3 class="yt-title text-sm font-bold text-white leading-snug group-hover:text-neutral-100 transition-colors line-clamp-2 mb-1 min-h-[2.5rem]">
+                ${short.title ? short.title : '<span class="inline-block w-full h-4 rounded bg-neutral-800 animate-pulse mt-1"></span>'}
+              </h3>
+              <p class="yt-author text-[10px] font-mono text-neutral-400">${short.author || '@zamlyateam'}</p>
+            </div>
+          </div>
+        </a>
+      `;
+
+      container.appendChild(card);
+    });
+
+    hydrateYouTubeShorts();
+  }
+
+  function renderModalCV(index) {
+    const profile = profilesData[index];
+    const cvContainer = document.getElementById('modal-cv-container');
+    if (!profile || !cvContainer) return;
+
+    const skillsArray = (profile.skills || '').split(',').map(s => s.trim()).filter(Boolean);
+
+    cvContainer.innerHTML = `
+      <div class="border-b border-surface-border pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight uppercase">${profile.name || 'Developer Name'}</h2>
+            <p class="text-xs sm:text-sm font-mono text-neutral-400 mt-1">
+              ${profile.location || 'Remote'} &bull; ${profile.email || 'contact@zamlya.com'} ${profile.phone ? `&bull; ${profile.phone}` : ''}
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="${profile.github || 'https://github.com'}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5">
+              <i class="fa-brands fa-github"></i> GitHub
+            </a>
+            <a href="${profile.linkedin || 'https://linkedin.com'}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5">
+              <i class="fa-brands fa-linkedin"></i> LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold border-b border-surface-border pb-1 mb-2">Professional Summary</h4>
+        <p class="text-neutral-300 font-light leading-relaxed">
+          ${profile.bio || 'Dedicated software engineer with demonstrable expertise in scalable architectures and modern software systems.'}
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold border-b border-surface-border pb-1 mb-2">Core Competencies & Stack</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-neutral-300">
+          <div><span class="text-neutral-500">Focus:</span> ${profile.focus_area || 'Full Stack Architecture'}</div>
+          <div><span class="text-neutral-500">Core Technologies:</span> ${skillsArray.slice(0, 4).join(', ') || 'Core Technologies'}</div>
+          <div><span class="text-neutral-500">Frameworks & Tools:</span> ${skillsArray.slice(4).join(', ') || 'Databases, Version Control'}</div>
+          <div><span class="text-neutral-500">Role:</span> ${profile.subtitle || 'Software Developer'}</div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold border-b border-surface-border pb-1 mb-2">Selected Projects</h4>
+        <div class="space-y-3 text-xs">
+          <div>
+            <div class="font-bold text-white">${profile.proj1_title || 'Project Alpha'}</div>
+            <p class="text-neutral-300 font-light mt-1">${profile.proj1_desc || 'Engineered production systems with focus on stability and throughput.'}</p>
+          </div>
+          <div>
+            <div class="font-bold text-white">${profile.proj2_title || 'Project Beta'}</div>
+            <p class="text-neutral-300 font-light mt-1">${profile.proj2_desc || 'Implemented architectural components and responsive integration endpoints.'}</p>
+          </div>
+        </div>
+      </div>
+
+      ${profile.education || profile.certifications ? `
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-surface-border">
+        ${profile.education ? `
+        <div>
+          <h4 class="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold mb-2">Education</h4>
+          <p class="text-xs font-mono text-neutral-300 leading-relaxed">${profile.education.split(';').map(item => `<span class="block mb-1">&bull; ${item.trim()}</span>`).join('')}</p>
+        </div>` : ''}
+        ${profile.certifications ? `
+        <div>
+          <h4 class="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold mb-2">Certifications & Achievements</h4>
+          <p class="text-xs font-mono text-neutral-300 leading-relaxed">${profile.certifications.split(';').map(item => `<span class="block mb-1">&bull; ${item.trim()}</span>`).join('')}</p>
+        </div>` : ''}
+      </div>` : ''}
+    `;
+
+    const tabButtons = document.querySelectorAll('#modal-tabs-container button');
+    tabButtons.forEach((btn, i) => {
+      if (i === index) {
+        btn.className = 'px-3.5 py-1.5 rounded-lg transition-all font-semibold bg-neutral-100 text-black shadow-sm';
+      } else {
+        btn.className = 'px-3.5 py-1.5 rounded-lg transition-all text-neutral-400 hover:text-white';
+      }
+    });
+  }
+
+  function extractYouTubeID(url) {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
+
+  // Helper to fetch live YouTube metadata from video URL using multi-tier oEmbed endpoints & caching
+  async function fetchLiveYouTubeData(videoId) {
+    const cacheKey = `yt_meta_${videoId}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.title) return parsed;
+      } catch (e) {}
+    }
+
+    // Attempt 1: YouTube Official oEmbed API
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`, {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.title) {
+          const payload = {
+            title: data.title,
+            author: data.author_name ? `@${data.author_name.replace(/\s+/g, '').toLowerCase()}` : '@zamlyateam'
+          };
+          localStorage.setItem(cacheKey, JSON.stringify(payload));
+          return payload;
+        }
+      }
+    } catch (e) {}
+
+    // Attempt 2: NoEmbed API Fallback
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.title) {
+          const payload = {
+            title: data.title,
+            author: data.author_name ? `@${data.author_name.replace(/\s+/g, '').toLowerCase()}` : '@zamlyateam'
+          };
+          localStorage.setItem(cacheKey, JSON.stringify(payload));
+          return payload;
+        }
+      }
+    } catch (e) {}
+
+    return null;
+  }
+
+  async function hydrateYouTubeShorts() {
+    const shortCards = document.querySelectorAll('a[data-yt-short]');
+
+    // Process in batches for smooth parallel loading
+    const batchSize = 6;
+    const cardArray = Array.from(shortCards);
+
+    for (let i = 0; i < cardArray.length; i += batchSize) {
+      const batch = cardArray.slice(i, i + batchSize);
+      await Promise.allSettled(batch.map(async (card) => {
+        const url = card.getAttribute('href');
+        const videoId = extractYouTubeID(url);
+        if (!videoId) return;
+
+        const thumbImg = card.querySelector('.yt-thumb');
+        const titleEl = card.querySelector('.yt-title');
+        const authorEl = card.querySelector('.yt-author');
+        const viewsVal = card.querySelector('.yt-views-val');
+        const likesVal = card.querySelector('.yt-likes-val');
+
+        // Set High-Resolution Thumbnail with Fallback to HQ
+        if (thumbImg) {
+          const maxResUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+          const hqUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          thumbImg.src = maxResUrl;
+          thumbImg.onerror = function() {
+            if (this.src !== hqUrl) this.src = hqUrl;
+          };
+        }
+
+        // Always fetch the live title from the video URL
+        const meta = await fetchLiveYouTubeData(videoId);
+        if (meta) {
+          if (titleEl && meta.title) {
+            titleEl.textContent = meta.title;
+          }
+          if (authorEl && meta.author) {
+            authorEl.textContent = meta.author;
+          }
+        } else if (titleEl && !titleEl.textContent.trim()) {
+          titleEl.textContent = `Short #${videoId}`;
+        }
+
+        // Fallback default metric displays if empty
+        if (viewsVal && (viewsVal.textContent === '...' || !viewsVal.textContent)) {
+          viewsVal.textContent = '128K';
+        }
+        if (likesVal && (likesVal.textContent === '...' || !likesVal.textContent)) {
+          likesVal.textContent = '14.2K';
+        }
+      }));
+    }
+  }
+
+  function handleImageFallback(img) {
+    const fallbackUrl = img.getAttribute('data-fallback');
+    if (!fallbackUrl) return;
+
+    const replaceSrc = () => {
+      if (img.src !== fallbackUrl) img.src = fallbackUrl;
+    };
+
+    img.addEventListener('error', replaceSrc);
+    if (img.complete && img.naturalWidth === 0) replaceSrc();
+  }
+
+  function initGateObserver() {
+    const gateCards = document.querySelectorAll('.gate-card-wrapper');
+
+    if ('IntersectionObserver' in window) {
+      const observerOptions = {
+        root: null,
+        rootMargin: '50px 0px -50px 0px',
+        threshold: 0.05
+      };
+
+      const gateObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.getAttribute('data-delay') || 0;
+            setTimeout(() => {
+              entry.target.classList.add('gate-active');
+            }, parseInt(delay, 10));
+            gateObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      gateCards.forEach((card, index) => {
+        if (!card.hasAttribute('data-delay')) {
+          card.setAttribute('data-delay', `${index * 120}`);
+        }
+        gateObserver.observe(card);
+      });
+    } else {
+      gateCards.forEach((card) => card.classList.add('gate-active'));
+    }
+  }
+
+  function initApp() {
+    const savedCSV = localStorage.getItem('zamlya_profiles_csv');
+    const rawCSV = (savedCSV && savedCSV.includes('Ritesh Vilas Janwade') && savedCSV.includes('Aditya Suresh Nakhale'))
+      ? savedCSV
+      : DEFAULT_CSV;
+    profilesData = parseCSV(rawCSV);
+    renderProfiles();
+
+    const savedShortsCSV = localStorage.getItem('zamlya_shorts_csv');
+    const rawShortsCSV = savedShortsCSV || DEFAULT_SHORTS_CSV;
+    shortsData = parseCSV(rawShortsCSV);
+    renderShorts();
+
+    // Modal References
+    const resumeModal = document.getElementById('resume-modal');
+    const csvModal = document.getElementById('csv-modal');
+    const csvRawInput = document.getElementById('csv-raw-input');
+    const csvFileInput = document.getElementById('csv-file-input');
+
+    const shortsCsvModal = document.getElementById('shorts-csv-modal');
+    const shortsRawInput = document.getElementById('shorts-raw-input');
+    const shortsFileInput = document.getElementById('shorts-file-input');
+
+    const addProfileModal = document.getElementById('add-profile-modal');
+    const addProfileForm = document.getElementById('add-profile-form');
+
+    function openResumeModal(index = 0) {
+      if (!resumeModal) return;
+      currentActiveModalTab = parseInt(index, 10) || 0;
+      renderModalCV(currentActiveModalTab);
+      resumeModal.classList.remove('hidden');
+      resumeModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeResumeModal() {
+      if (!resumeModal) return;
+      resumeModal.classList.add('hidden');
+      resumeModal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function openCSVModal() {
+      if (!csvModal) return;
+      if (csvRawInput) {
+        csvRawInput.value = localStorage.getItem('zamlya_profiles_csv') || DEFAULT_CSV;
+      }
+      csvModal.classList.remove('hidden');
+      csvModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCSVModal() {
+      if (!csvModal) return;
+      csvModal.classList.add('hidden');
+      csvModal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function openShortsModal() {
+      if (!shortsCsvModal) return;
+      if (shortsRawInput) {
+        shortsRawInput.value = localStorage.getItem('zamlya_shorts_csv') || DEFAULT_SHORTS_CSV;
+      }
+      shortsCsvModal.classList.remove('hidden');
+      shortsCsvModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeShortsModal() {
+      if (!shortsCsvModal) return;
+      shortsCsvModal.classList.add('hidden');
+      shortsCsvModal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function openAddProfileModal() {
+      if (!addProfileModal) return;
+      addProfileModal.classList.remove('hidden');
+      addProfileModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAddProfileModal() {
+      if (!addProfileModal) return;
+      addProfileModal.classList.add('hidden');
+      addProfileModal.classList.remove('flex');
+      document.body.style.overflow = '';
+      if (addProfileForm) addProfileForm.reset();
+    }
+
+    // Add Profile Form Submission
+    if (addProfileForm) {
+      addProfileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nextIdx = profilesData.length + 1;
+        const gateIdStr = nextIdx < 10 ? `0${nextIdx}` : `${nextIdx}`;
+
+        const newProfile = {
+          gate_id: gateIdStr,
+          gate_tag: `GATE_${gateIdStr}`,
+          role_tag: (document.getElementById('new-role-tag').value.trim() || 'SOFTWARE DEV').toUpperCase(),
+          name: document.getElementById('new-name').value.trim(),
+          subtitle: document.getElementById('new-subtitle').value.trim(),
+          bio: document.getElementById('new-bio').value.trim(),
+          image_url: document.getElementById('new-image').value.trim() || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&auto=format&fit=crop&q=80`,
+          badge_text: document.getElementById('new-badge').value.trim() || 'Developer',
+          focus_area: document.getElementById('new-focus').value.trim() || 'Software Engineering',
+          skills: document.getElementById('new-skills').value.trim(),
+          proj1_title: document.getElementById('new-p1-title').value.trim() || 'Primary Application',
+          proj1_desc: document.getElementById('new-p1-desc').value.trim() || 'Full-stack software engineering project.',
+          proj2_title: document.getElementById('new-p2-title').value.trim() || 'Systems Project',
+          proj2_desc: document.getElementById('new-p2-desc').value.trim() || 'Architectural components and APIs.',
+          location: document.getElementById('new-location').value.trim() || 'Remote',
+          email: document.getElementById('new-email').value.trim() || 'contact@zamlya.com',
+          phone: document.getElementById('new-phone').value.trim() || '',
+          education: 'Computer Applications & Software Engineering',
+          certifications: 'Software Developer Certified',
+          github: document.getElementById('new-github').value.trim() || 'https://github.com',
+          linkedin: document.getElementById('new-linkedin').value.trim() || 'https://linkedin.com'
+        };
+
+        profilesData.push(newProfile);
+
+        const headers = ['gate_id','gate_tag','role_tag','name','subtitle','bio','image_url','badge_text','focus_area','skills','proj1_title','proj1_desc','proj2_title','proj2_desc','location','email','phone','education','certifications','github','linkedin'];
+        const csvRows = [headers.join(',')];
+        profilesData.forEach(p => {
+          const rowVals = headers.map(h => {
+            const val = p[h] || '';
+            return `"${val.toString().replace(/"/g, '""')}"`;
+          });
+          csvRows.push(rowVals.join(','));
+        });
+        localStorage.setItem('zamlya_profiles_csv', csvRows.join('\n'));
+
+        renderProfiles();
+        closeAddProfileModal();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const openResumeBtn = e.target.closest('[data-open-modal]');
+      if (openResumeBtn) {
+        e.preventDefault();
+        const profileIndex = openResumeBtn.getAttribute('data-open-modal') || 0;
+        openResumeModal(profileIndex);
+        return;
+      }
+
+      if (e.target.closest('[data-close-modal]')) {
+        e.preventDefault();
+        closeResumeModal();
+        return;
+      }
+
+      const tabBtn = e.target.closest('[data-tab-index]');
+      if (tabBtn) {
+        e.preventDefault();
+        const tabIdx = parseInt(tabBtn.getAttribute('data-tab-index'), 10);
+        renderModalCV(tabIdx);
+        return;
+      }
+
+      if (e.target.closest('#btn-add-profile')) {
+        e.preventDefault();
+        openAddProfileModal();
+        return;
+      }
+      if (e.target.closest('#btn-close-add-profile') || e.target.closest('#btn-cancel-add-profile')) {
+        e.preventDefault();
+        closeAddProfileModal();
+        return;
+      }
+
+      if (e.target.closest('#btn-open-csv')) {
+        e.preventDefault();
+        openCSVModal();
+        return;
+      }
+      if (e.target.closest('#btn-close-csv') || e.target.closest('#btn-cancel-csv')) {
+        e.preventDefault();
+        closeCSVModal();
+        return;
+      }
+
+      if (e.target.closest('#btn-open-shorts-csv')) {
+        e.preventDefault();
+        openShortsModal();
+        return;
+      }
+      if (e.target.closest('#btn-close-shorts-csv') || e.target.closest('#btn-cancel-shorts-csv')) {
+        e.preventDefault();
+        closeShortsModal();
+        return;
+      }
+
+      if (resumeModal && e.target === resumeModal) closeResumeModal();
+      if (csvModal && e.target === csvModal) closeCSVModal();
+      if (shortsCsvModal && e.target === shortsCsvModal) closeShortsModal();
+      if (addProfileModal && e.target === addProfileModal) closeAddProfileModal();
+    });
+
+    // Profiles CSV Handlers
+    const saveCsvBtn = document.getElementById('btn-save-csv');
+    if (saveCsvBtn && csvRawInput) {
+      saveCsvBtn.addEventListener('click', () => {
+        const text = csvRawInput.value.trim();
+        if (!text) return;
+        const parsed = parseCSV(text);
+        if (parsed.length > 0) {
+          localStorage.setItem('zamlya_profiles_csv', text);
+          profilesData = parsed;
+          renderProfiles();
+          closeCSVModal();
+        }
+      });
+    }
+
+    const resetCsvBtn = document.getElementById('btn-reset-csv');
+    if (resetCsvBtn && csvRawInput) {
+      resetCsvBtn.addEventListener('click', () => {
+        csvRawInput.value = DEFAULT_CSV;
+      });
+    }
+
+    const downloadCsvBtn = document.getElementById('btn-download-csv');
+    if (downloadCsvBtn && csvRawInput) {
+      downloadCsvBtn.addEventListener('click', () => {
+        const blob = new Blob([csvRawInput.value], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'zamlya_profiles.csv';
+        link.click();
+      });
+    }
+
+    if (csvFileInput && csvRawInput) {
+      csvFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          csvRawInput.value = event.target.result;
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // Shorts CSV Handlers
+    const saveShortsCsvBtn = document.getElementById('btn-save-shorts-csv');
+    if (saveShortsCsvBtn && shortsRawInput) {
+      saveShortsCsvBtn.addEventListener('click', () => {
+        const text = shortsRawInput.value.trim();
+        if (!text) return;
+        const parsed = parseCSV(text);
+        if (parsed.length > 0) {
+          localStorage.setItem('zamlya_shorts_csv', text);
+          shortsData = parsed;
+          renderShorts();
+          closeShortsModal();
+        }
+      });
+    }
+
+    const resetShortsCsvBtn = document.getElementById('btn-reset-shorts-csv');
+    if (resetShortsCsvBtn && shortsRawInput) {
+      resetShortsCsvBtn.addEventListener('click', () => {
+        shortsRawInput.value = DEFAULT_SHORTS_CSV;
+      });
+    }
+
+    const downloadShortsCsvBtn = document.getElementById('btn-download-shorts-csv');
+    if (downloadShortsCsvBtn && shortsRawInput) {
+      downloadShortsCsvBtn.addEventListener('click', () => {
+        const blob = new Blob([shortsRawInput.value], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'zamlya_shorts.csv';
+        link.click();
+      });
+    }
+
+    if (shortsFileInput && shortsRawInput) {
+      shortsFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          shortsRawInput.value = event.target.result;
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // Dismiss with Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeResumeModal();
+        closeCSVModal();
+        closeShortsModal();
+        closeAddProfileModal();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+</script>
+</body>
+</html>

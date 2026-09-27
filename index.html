@@ -45,7 +45,7 @@
         </div>
       </div>
       <span class="px-2.5 py-1 rounded-full bg-red-950/60 border border-red-800/40 text-red-400 text-[11px] self-start sm:self-auto">
-        74 Unlisted Videos Active
+        75 Unlisted Videos Active
       </span>
     </div>
 
@@ -97,7 +97,7 @@
           id="btn-quick-sync-playlist"
           class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white transition-all flex items-center gap-2 cursor-pointer"
         >
-          <i class="fa-solid fa-rotate text-red-400"></i> Quick Reload 74 Videos
+          <i class="fa-solid fa-rotate text-red-400"></i> Quick Reload 75 Videos
         </button>
 
         <div class="flex items-center gap-2">
@@ -130,7 +130,7 @@
     <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-surface-border bg-neutral-950/80 backdrop-blur-md">
       <div class="flex items-center gap-2 overflow-hidden pr-2">
         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950/80 border border-red-800/40 text-[10px] font-mono text-red-400 shrink-0">
-          <i class="fa-brands fa-youtube text-red-500"></i> <span id="player-index-label">1/74</span>
+          <i class="fa-brands fa-youtube text-red-500"></i> <span id="player-index-label">1/75</span>
         </span>
         <span id="player-author-label" class="text-xs font-mono text-neutral-400 truncate">@zamlyateam</span>
       </div>
@@ -352,7 +352,7 @@
         </a>
         <a href="#shorts" class="px-4 py-2 rounded-xl bg-neutral-900/80 border border-surface-border flex items-center gap-2 hover:border-neutral-500 hover:text-white transition-all">
           <i class="fa-brands fa-youtube text-red-500"></i>
-          <span>YouTube Shorts (<span id="hero-shorts-count">74</span> Videos)</span>
+          <span>YouTube Shorts (<span id="hero-shorts-count">75</span> Videos)</span>
         </a>
       </div>
     </div>
@@ -400,7 +400,7 @@
         </div>
         <h2 class="text-3xl font-bold tracking-tight text-white">Curated YouTube Shorts Stream</h2>
         <p class="text-neutral-400 text-sm mt-2 max-w-xl">
-          Live stream of <span id="shorts-count-badge" class="font-bold text-white">74</span> unlisted shorts from playlist <span class="font-mono text-xs px-2 py-0.5 rounded bg-neutral-900 border border-surface-border text-neutral-200">PLMnA0kI1d1R8</span>. Click any card to play in full vertical view or sync new videos via YouTube API.
+          Live stream of <span id="shorts-count-badge" class="font-bold text-white">75</span> unlisted shorts from playlist <span class="font-mono text-xs px-2 py-0.5 rounded bg-neutral-900 border border-surface-border text-neutral-200">PLMnA0kI1d1R8</span>. Click any card to play in full vertical view or sync new videos via YouTube API.
         </p>
       </div>
 
@@ -441,7 +441,7 @@
         rel="noopener noreferrer"
         class="px-5 py-2.5 rounded-xl bg-neutral-100 hover:bg-white text-black font-semibold text-xs tracking-wide transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap"
       >
-        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Open Full Playlist (74 Shorts)
+        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Open Full Playlist (75 Shorts)
       </a>
     </div>
   </section>
@@ -719,6 +719,7 @@
      2. DEFAULT 58 YOUTUBE SHORTS CSV DATASET
      ========================================================================== */
   const DEFAULT_SHORTS_CSV = `url,author,title,views,likes
+https://youtube.com/shorts/5U3gIeDTy_w,"Amravati kr ahe na bhau. 😎","j1 chalu ahe 😅😋💥 #j1 #date 21/9/2026 #pune",160K,21.3K
 https://youtube.com/shorts/2_N2kCR7tgM,"Amravati kr ahe na bhau. 😎","✨ Dance with bappa 🕺🏻🙌🏻😍 in Pune 😅 #date 25/9/2026 #ganpatvisarjan #pune",160K,21.3K
 https://youtube.com/shorts/9HvPrgU2OoA,"Amravati kr ahe na bhau. 😎","🤝 Dmart payment successfully zale ya veles 🎉 #date 22/9/2026 #shopping #pune",160K,21.3K
 https://youtube.com/shorts/SvKZXexqXTA,"Amravati kr ahe na bhau. 😎","💥 आज केली पुण्यात पाहिल कर 😋🙎🏻🤝 #date 13/9/2026 #पुणे_बातम्या",160K,21.3K
@@ -1431,7 +1432,7 @@ https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MAD
       // Approach B: If no API key or playlistId matches PLMnA0kI1d1R8
       if (fetchedVideos.length === 0) {
         if (playlistId === 'PLMnA0kI1d1R8') {
-          if (statusText) statusText.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Loaded 74 verified unlisted shorts from playlist PLMnA0kI1d1R8!`;
+          if (statusText) statusText.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Loaded 75 verified unlisted shorts from playlist PLMnA0kI1d1R8!`;
           const parsed = parseCSV(DEFAULT_SHORTS_CSV);
           fetchedVideos = parsed;
         } else {
@@ -1495,7 +1496,7 @@ https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MAD
 
     const savedShortsCSV = localStorage.getItem('zamlya_shorts_csv');
     // Upgrade if saved version has fewer than 70 items or lacks full titles
-    const rawShortsCSV = (savedShortsCSV && savedShortsCSV.includes('14igTZWaeTY') && savedShortsCSV.split('\n').length >= 70 && !savedShortsCSV.includes(',@zamlyateam,,160K'))
+    const rawShortsCSV = (savedShortsCSV && savedShortsCSV.includes('5U3gIeDTy_w') && savedShortsCSV.split('\n').length >= 70 && !savedShortsCSV.includes(',@zamlyateam,,160K'))
       ? savedShortsCSV
       : DEFAULT_SHORTS_CSV;
     localStorage.setItem('zamlya_shorts_csv', rawShortsCSV);

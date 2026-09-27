@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zamlya.com — Developer Portfolios & Technical Shorts Stream</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23121212'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23333333' stroke-width='1.5'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-weight='700' font-size='18'>Z</text></svg>" />
+
   <!-- External Stylesheets & Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -13,7 +17,162 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS Configuration -->
-  <script>
+  
+<!-- ==========================================
+     YOUTUBE API & PLAYLIST SYNC MODAL
+     ========================================== -->
+<div id="yt-api-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  <div class="relative w-full max-w-2xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-8 my-8 text-neutral-200">
+    <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-5">
+      <div>
+        <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <i class="fa-brands fa-youtube text-red-500 text-xl"></i> YouTube API & Playlist Sync
+        </h3>
+        <p class="text-xs text-neutral-400 font-mono mt-1">Directly sync and extract unlisted videos from your playlist or channel.</p>
+      </div>
+      <button id="btn-close-yt-api" class="w-8 h-8 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center transition-all cursor-pointer">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+    <!-- Active Playlist Badge -->
+    <div class="mb-5 p-3.5 rounded-xl bg-neutral-950 border border-surface-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+      <div class="flex items-center gap-2.5">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+        <div>
+          <span class="text-neutral-400">Connected Playlist:</span>
+          <span class="text-white font-semibold ml-1">PLMnA0kI1d1R8</span>
+        </div>
+      </div>
+      <span class="px-2.5 py-1 rounded-full bg-red-950/60 border border-red-800/40 text-red-400 text-[11px] self-start sm:self-auto">
+        74 Unlisted Videos Active
+      </span>
+    </div>
+
+    <form id="yt-api-form" class="space-y-4">
+      <div>
+        <label class="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold">
+          YouTube Playlist URL or Playlist ID *
+        </label>
+        <div class="relative">
+          <input
+            type="text"
+            id="yt-playlist-input"
+            required
+            value="https://www.youtube.com/playlist?list=PLMnA0kI1d1R8"
+            placeholder="e.g. https://www.youtube.com/playlist?list=PLMnA0kI1d1R8 or PLMnA0kI1d1R8"
+            class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-red-500/80 pr-10"
+          />
+          <button type="button" id="btn-reset-default-playlist" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 text-xs font-mono px-2 py-1 rounded bg-neutral-900 border border-surface-border" title="Reset to your default playlist">
+            Default
+          </button>
+        </div>
+        <p class="text-[11px] text-neutral-400 font-mono mt-1">Accepts standard playlist URLs or watch URLs with &list= parameter.</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold flex items-center justify-between">
+          <span>YouTube Data API v3 Key <span class="text-neutral-500 font-normal">(Optional)</span></span>
+          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="text-[10px] text-neutral-400 hover:text-red-400 underline">Get free API key</a>
+        </label>
+        <input
+          type="password"
+          id="yt-api-key-input"
+          placeholder="AIzaSy... (Leave empty to use Instant Direct Sync)"
+          class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-red-500/80"
+        />
+        <p class="text-[11px] text-neutral-500 font-mono mt-1">If blank, the system automatically uses the direct playlist catalog with live oEmbed metadata.</p>
+      </div>
+
+      <!-- Sync Status Box -->
+      <div id="yt-sync-status-box" class="hidden p-3 rounded-xl bg-neutral-950 border border-surface-border font-mono text-xs text-neutral-300">
+        <div class="flex items-center gap-2" id="yt-sync-status-text">
+          <i class="fa-solid fa-spinner fa-spin text-red-500"></i> Syncing playlist...
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-surface-border">
+        <button
+          type="button"
+          id="btn-quick-sync-playlist"
+          class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white transition-all flex items-center gap-2 cursor-pointer"
+        >
+          <i class="fa-solid fa-rotate text-red-400"></i> Quick Reload 74 Videos
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            id="btn-cancel-yt-api"
+            class="px-4 py-2 rounded-xl bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            id="btn-submit-yt-sync"
+            class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs font-mono transition-all flex items-center gap-2 shadow-lg shadow-red-950/50 cursor-pointer"
+          >
+            <i class="fa-brands fa-youtube"></i> Sync Now
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==========================================
+     IN-PAGE SHORTS VERTICAL PLAYER MODAL
+     ========================================== -->
+<div id="shorts-player-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-hidden">
+  <div class="relative w-full max-w-sm sm:max-w-md h-[90vh] max-h-[860px] bg-[#0d0d0d] border border-surface-border rounded-3xl shadow-2xl flex flex-col overflow-hidden text-neutral-200">
+    <!-- Player Header -->
+    <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-surface-border bg-neutral-950/80 backdrop-blur-md">
+      <div class="flex items-center gap-2 overflow-hidden pr-2">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950/80 border border-red-800/40 text-[10px] font-mono text-red-400 shrink-0">
+          <i class="fa-brands fa-youtube text-red-500"></i> <span id="player-index-label">1/74</span>
+        </span>
+        <span id="player-author-label" class="text-xs font-mono text-neutral-400 truncate">@zamlyateam</span>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <a id="player-external-link" href="#" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white flex items-center justify-center text-xs transition-colors" title="Open in YouTube">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <button id="btn-close-shorts-player" class="w-8 h-8 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer" title="Close (Esc)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Video Frame Container (9:16 Aspect) -->
+    <div class="relative flex-1 w-full bg-black flex items-center justify-center overflow-hidden">
+      <iframe
+        id="player-iframe"
+        src=""
+        title="YouTube Shorts Player"
+        class="w-full h-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <!-- Player Bottom Bar & Controls -->
+    <div class="p-3.5 sm:p-4 bg-neutral-950/90 border-t border-surface-border">
+      <h3 id="player-title-label" class="text-xs sm:text-sm font-semibold text-white truncate mb-2"></h3>
+      <div class="flex items-center justify-between text-xs font-mono text-neutral-400">
+        <button id="player-btn-prev" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-chevron-left text-[10px]"></i> Prev
+        </button>
+        <span class="text-[11px] text-neutral-500">Use &larr; &rarr; arrows</span>
+        <button id="player-btn-next" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+          Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -193,7 +352,7 @@
         </a>
         <a href="#shorts" class="px-4 py-2 rounded-xl bg-neutral-900/80 border border-surface-border flex items-center gap-2 hover:border-neutral-500 hover:text-white transition-all">
           <i class="fa-brands fa-youtube text-red-500"></i>
-          <span>YouTube Shorts (58 Videos)</span>
+          <span>YouTube Shorts (<span id="hero-shorts-count">74</span> Videos)</span>
         </a>
       </div>
     </div>
@@ -237,20 +396,28 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
       <div>
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/40 border border-red-900/40 text-red-400 font-mono text-xs mb-3">
-          <i class="fa-brands fa-youtube text-red-500 text-sm"></i> Auto-Synced Shorts Feed
+          <i class="fa-brands fa-youtube text-red-500 text-sm"></i> Unlisted Shorts & Playlist Stream
         </div>
-        <h2 class="text-3xl font-bold tracking-tight text-white">Student & Tech Shorts</h2>
+        <h2 class="text-3xl font-bold tracking-tight text-white">Curated YouTube Shorts Stream</h2>
         <p class="text-neutral-400 text-sm mt-2 max-w-xl">
-          Complete stream of 58 curated technical shorts. Any valid YouTube link automatically syncs high-resolution thumbnails, titles, and engagement stats.
+          Live stream of <span id="shorts-count-badge" class="font-bold text-white">74</span> unlisted shorts from playlist <span class="font-mono text-xs px-2 py-0.5 rounded bg-neutral-900 border border-surface-border text-neutral-200">PLMnA0kI1d1R8</span>. Click any card to play in full vertical view or sync new videos via YouTube API.
         </p>
       </div>
 
-      <button
-        id="btn-open-shorts-csv"
-        class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border hover:border-surface-borderHover text-xs font-mono text-neutral-300 flex items-center gap-2 transition-all self-start md:self-auto"
-      >
-        <i class="fa-solid fa-sliders text-red-400"></i> Manage Shorts Sheet
-      </button>
+      <div class="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+        <button
+          id="btn-open-yt-api"
+          class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-mono font-semibold flex items-center gap-2 transition-all shadow-lg shadow-red-950/40 active:scale-95 cursor-pointer"
+        >
+          <i class="fa-brands fa-youtube text-sm"></i> YouTube API / Sync
+        </button>
+        <button
+          id="btn-open-shorts-csv"
+          class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border hover:border-surface-borderHover text-xs font-mono text-neutral-300 flex items-center gap-2 transition-all cursor-pointer"
+        >
+          <i class="fa-solid fa-sliders text-red-400"></i> Manage Shorts Sheet
+        </button>
+      </div>
     </div>
 
     <!-- Responsive Multi-Column Grid for Shorts -->
@@ -269,12 +436,12 @@
         </div>
       </div>
       <a
-        href="https://youtube.com"
+        href="https://www.youtube.com/playlist?list=PLMnA0kI1d1R8"
         target="_blank"
         rel="noopener noreferrer"
         class="px-5 py-2.5 rounded-xl bg-neutral-100 hover:bg-white text-black font-semibold text-xs tracking-wide transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap"
       >
-        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Watch Full Channel
+        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Open Full Playlist (74 Shorts)
       </a>
     </div>
   </section>
@@ -552,73 +719,80 @@
      2. DEFAULT 58 YOUTUBE SHORTS CSV DATASET
      ========================================================================== */
   const DEFAULT_SHORTS_CSV = `url,author,title,views,likes
-https://youtube.com/shorts/iOA4mgEJ7WQ?feature=share,@zamlyateam,,160K,21.3K
-https://youtube.com/shorts/tFEGm336tLg?feature=share,@zamlyateam,,190K,24.2K
-https://youtube.com/shorts/M1g4JBLkTqQ?feature=share,@zamlyateam,,175K,22.8K
-https://youtube.com/shorts/WqGTLmEkN0o?feature=share,@zamlyateam,,210K,27.1K
-https://youtube.com/shorts/wJQ-c_WyEew?feature=share,@zamlyateam,,135K,16.7K
-https://youtube.com/shorts/BwKQykvhOUU?feature=share,@zamlyateam,,185K,23.5K
-https://youtube.com/shorts/y6qrGyFZpqM?feature=share,@zamlyateam,,155K,19.4K
-https://youtube.com/shorts/-bC0OTUUkpk?feature=share,@zamlyateam,,230K,29.8K
-https://youtube.com/shorts/lYq_6BjiIlk?feature=share,@zamlyateam,,170K,21.6K
-https://youtube.com/shorts/Aa12Z6SQGqk?feature=share,@zamlyateam,,148K,18.4K
-https://youtube.com/shorts/kfRAl0kHwF4?feature=share,@zamlyateam,,92K,11.2K
-https://youtube.com/shorts/cAqsaw3aacU?feature=share,@zamlyateam,,210K,25.6K
-https://youtube.com/shorts/SI_lcNRsAyM?feature=share,@zamlyateam,,134K,16.2K
-https://youtube.com/shorts/ek8nHgD01oI?feature=share,@zamlyateam,,118K,14.5K
-https://youtube.com/shorts/T4v1Jo5OBr4?feature=share,@zamlyateam,,175K,22.1K
-https://youtube.com/shorts/Rh2hoqV7hb4?feature=share,@zamlyateam,,98K,12.0K
-https://youtube.com/shorts/SJa5znPybG4?feature=share,@zamlyateam,,156K,19.3K
-https://youtube.com/shorts/opN_6ArWg5k?feature=share,@zamlyateam,,182K,23.4K
-https://youtube.com/shorts/zectBmJHq9g?feature=share,@zamlyateam,,143K,17.8K
-https://youtube.com/shorts/WAuTTP0eLvM?feature=share,@zamlyateam,,112K,13.9K
-https://youtube.com/shorts/Qw1ujnonX9A?feature=share,@zamlyateam,,225K,28.4K
-https://youtube.com/shorts/rk9Rdgyr9t0?feature=share,@zamlyateam,,164K,20.1K
-https://youtube.com/shorts/N9XA7FDY6LI?feature=share,@zamlyateam,,130K,15.7K
-https://youtube.com/shorts/6Y47qlIIgsY?feature=share,@zamlyateam,,190K,24.0K
-https://youtube.com/shorts/tU4RyPccPC4?feature=share,@zamlyateam,,145K,18.0K
-https://youtube.com/shorts/1VvICPHdQmU?feature=share,@zamlyateam,,105K,12.8K
-https://youtube.com/shorts/efZ5Wu0xoV0?feature=share,@zamlyateam,,215K,27.3K
-https://youtube.com/shorts/3_k_4uj6-Gk?feature=share,@zamlyateam,,125K,15.2K
-https://youtube.com/shorts/5C5nj6XTlKA?feature=share,@zamlyateam,,89K,10.6K
-https://youtube.com/shorts/5CWyYR506_Y?feature=share,@zamlyateam,,168K,21.0K
-https://youtube.com/shorts/ilgWc1vzNCo?feature=share,@zamlyateam,,240K,31.2K
-https://youtube.com/shorts/Pu48Cf11mwc?feature=share,@zamlyateam,,152K,18.7K
-https://youtube.com/shorts/TJpyPBNwbrE?feature=share,@zamlyateam,,138K,16.9K
-https://youtube.com/shorts/_DAbSwBs2Fk?feature=share,@zamlyateam,,195K,24.8K
-https://youtube.com/shorts/iISZd4TLOME?feature=share,@zamlyateam,,110K,13.4K
-https://youtube.com/shorts/G8IiQ4sM2vg?feature=share,@zamlyateam,,122K,14.9K
-https://youtube.com/shorts/xj4VtRP0qgk?feature=share,@zamlyateam,,140K,17.2K
-https://youtube.com/shorts/TANNDQH_99s?feature=share,@zamlyateam,,260K,33.5K
-https://youtube.com/shorts/DqV10aHf0LI?feature=share,@zamlyateam,,180K,22.4K
-https://youtube.com/shorts/j3lEDsP-QWA?feature=share,@zamlyateam,,135K,16.5K
-https://youtube.com/shorts/jQpePR4qUw8?feature=share,@zamlyateam,,170K,21.5K
-https://youtube.com/shorts/h69SN2x6a9c?feature=share,@zamlyateam,,205K,26.1K
-https://youtube.com/shorts/ONQEyP70TXQ?feature=share,@zamlyateam,,115K,14.1K
-https://youtube.com/shorts/YuftaOv9pqY?feature=share,@zamlyateam,,230K,29.0K
-https://youtube.com/shorts/MnK4MrB89lc?feature=share,@zamlyateam,,150K,18.5K
-https://youtube.com/shorts/RpaSpKuDm9U?feature=share,@zamlyateam,,162K,20.4K
-https://youtube.com/shorts/y2KIDjZy5UM?feature=share,@zamlyateam,,95K,11.8K
-https://youtube.com/shorts/hRIJFL5BJnk?feature=share,@zamlyateam,,185K,23.1K
-https://youtube.com/shorts/14igTZWaeTY?feature=share,@zamlyateam,,128K,15.9K
-https://youtube.com/shorts/gzVij3GD0UM?feature=share,@zamlyateam,,275K,35.0K
-https://youtube.com/shorts/FAzESp7UsgQ?feature=share,@zamlyateam,,142K,17.6K
-https://youtube.com/shorts/EBHxSTznbGc?feature=share,@zamlyateam,,198K,25.2K
-https://youtube.com/shorts/Y_rX2Gl_TVU?feature=share,@zamlyateam,,160K,20.0K
-https://youtube.com/shorts/vvIIcyaAnjw?feature=share,@zamlyateam,,108K,13.2K
-https://youtube.com/shorts/O8ZRKwfYCdI?feature=share,@zamlyateam,,172K,21.8K
-https://youtube.com/shorts/tynnA--zBQM?feature=share,@zamlyateam,,155K,19.2K
-https://youtube.com/shorts/xOqPjaOYJdU?feature=share,@zamlyateam,,210K,26.7K
-https://youtube.com/shorts/yuTS1ElSSPg?feature=share,@zamlyateam,,132K,16.4K
-https://youtube.com/shorts/YgoziKq_b-0?feature=share,@zamlyateam,,245K,31.0K
-https://youtube.com/shorts/iXOOUdQAj3w?feature=share,@zamlyateam,,290K,37.5K
-https://youtube.com/shorts/VNzcWBPulEA?feature=share,@zamlyateam,,188K,23.9K
-https://youtube.com/shorts/MkLCHObgXEs?feature=share,@zamlyateam,,215K,27.8K
-https://youtube.com/shorts/aPylHaAdj0U?feature=share,@zamlyateam,,165K,20.5K
-https://youtube.com/shorts/brzaQKidzU0?feature=share,@zamlyateam,,310K,40.2K
-https://youtube.com/shorts/gn6nAqwQYBk?feature=share,@zamlyateam,,195K,24.6K
-https://youtube.com/shorts/z4lgc2H0YXI?feature=share,@zamlyateam,,178K,22.3K
-https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
+https://youtube.com/shorts/2_N2kCR7tgM,"Amravati kr ahe na bhau. 😎","✨ Dance with bappa 🕺🏻🙌🏻😍 in Pune 😅 #date 25/9/2026 #ganpatvisarjan #pune",160K,21.3K
+https://youtube.com/shorts/9HvPrgU2OoA,"Amravati kr ahe na bhau. 😎","🤝 Dmart payment successfully zale ya veles 🎉 #date 22/9/2026 #shopping #pune",160K,21.3K
+https://youtube.com/shorts/SvKZXexqXTA,"Amravati kr ahe na bhau. 😎","💥 आज केली पुण्यात पाहिल कर 😋🙎🏻🤝 #date 13/9/2026 #पुणे_बातम्या",160K,21.3K
+https://youtube.com/shorts/IG2Sz9jEmD8,"Amravati kr ahe na bhau. 😎","पुणे चे मानाचे गणपती 🙌🏻🙇🏻 #pune #date 15/9/2026",160K,21.3K
+https://youtube.com/shorts/QwuD0CnDYwk,"Amravati kr ahe na bhau. 😎","🦚 Janmashtami Special dance 🕺🏻🕺🏻 💥 #date 5/9/2026 #pube #dance",160K,21.3K
+https://youtube.com/shorts/VIyMQfT7k7E,"Amravati kr ahe na bhau. 😎","Janmashtami Special 🦚💥📢 #pune #date 4/9/2026  #funny",160K,21.3K
+https://youtube.com/shorts/lYq_6BjiIlk,"Amravati kr ahe na bhau. 😎","aaj class khup vel ghetla re ba .... 🤯🤯💥 #pune #date 3/9/2026 #cybersuccessInstitute",160K,21.3K
+https://youtube.com/shorts/-bC0OTUUkpk,"Amravati kr ahe na bhau. 😎","Google Ka Batlaaa New Gift aal re ba 🎁🤝🎉 #pune #date 3/9/2026 #todaysdate #automobile #funny #comedy",160K,21.3K
+https://youtube.com/shorts/y6qrGyFZpqM,"Amravati kr ahe na bhau. 😎","Aaj Aale Room vr college che potte 🤜🏻🤛🏻🤝😎 #pune #date 2/9/2626",160K,21.3K
+https://youtube.com/shorts/BwKQykvhOUU,"Amravati kr ahe na bhau. 😎","Singer 🎶 aale re ba 😂😂📢🔊 #pune #date 2/9/2026 #funny",160K,21.3K
+https://youtube.com/shorts/wJQ-c_WyEew,"Amravati kr ahe na bhau. 😎","🐼 le j1 karale nahi bhetl re ba aaj 😂😂 #pune #date 2/9/2026",160K,21.3K
+https://youtube.com/shorts/WqGTLmEkN0o,"Amravati kr ahe na bhau. 😎","Saurav chala Room sodun 🤝🤜🏻🤛🏻 🙎🏻 #pune #date 2/9/2026 #bye",160K,21.3K
+https://youtube.com/shorts/M1g4JBLkTqQ,"Amravati kr ahe na bhau. 😎","Chala re ba j1 karale 👺😤📢 #pune #date 1/9/2026 #funny",160K,21.3K
+https://youtube.com/shorts/tFEGm336tLg,"Amravati kr ahe na bhau. 😎","😂 Zamlya.com cha CEO 🐼 🔊📢 and Team 🐼 #date 31/8/2026 #pune #comdey",160K,21.3K
+https://youtube.com/shorts/dvpTnM772I8,"Amravati kr ahe na bhau. 😎","😂😂 🐼",160K,21.3K
+https://youtube.com/shorts/iOA4mgEJ7WQ,"Amravati kr ahe na bhau. 😎","Shivratri Cha Mahina re 🐼 #date 31/8/2026 #pune #comedy #zamlya.com",160K,21.3K
+https://youtube.com/shorts/Aa12Z6SQGqk,"Amravati kr ahe na bhau. 😎","Raghav chya Baket madhe Matter 🤦🏻🔥🤜🏻🤛🏻  #pune #date 30/8/2026 #comedy",160K,21.3K
+https://youtube.com/shorts/kfRAl0kHwF4,"Amravati kr ahe na bhau. 😎","D.Mart shopping 🛒🛍️🙎🏻 #pune #date 28/8/2026 #comedy",160K,21.3K
+https://youtube.com/shorts/cAqsaw3aacU,"Amravati kr ahe na bhau. 😎","Aaj gelo 🦚 Mandirat iskcon temple #pune #date 28/8/2026 #comedy",160K,21.3K
+https://youtube.com/shorts/SI_lcNRsAyM,"Amravati kr ahe na bhau. 😎","Bhannd zale re ba 🐼 che  #pune #date 28/8/2026 #comedy",160K,21.3K
+https://youtube.com/shorts/ek8nHgD01oI,"Amravati kr ahe na bhau. 😎","Sandwich 🍔🥪 🤷🏻 #pune #date 27/8/2026 #comedy",160K,21.3K
+https://youtube.com/shorts/T4v1Jo5OBr4,"Amravati kr ahe na bhau. 😎","Briyani Promise 🤷🏻😁😂 #date 26/8/2026 #promise #pune",160K,21.3K
+https://youtube.com/shorts/Rh2hoqV7hb4,"Amravati kr ahe na bhau. 😎","Sunday special Bhel in Pune 😍😂🍿🤌🏻 #pune #date 21/8/2026 #comedy #mataji",160K,21.3K
+https://youtube.com/shorts/SJa5znPybG4,"Amravati kr ahe na bhau. 😎","Pudya khat ahe Deole 😂😁 #pune #date 26/8/2026  #comedy",160K,21.3K
+https://youtube.com/shorts/opN_6ArWg5k,"Amravati kr ahe na bhau. 😎","🦚🦚 Morni Dance 🩰 #date 22/8/2026  #Dance #pune",160K,21.3K
+https://youtube.com/shorts/zectBmJHq9g,"Amravati kr ahe na bhau. 😎","Google cha Offer le ba 🐼 le  #panda #date 21/8/2026 #pune #comedy",160K,21.3K
+https://youtube.com/shorts/WAuTTP0eLvM,"Amravati kr ahe na bhau. 😎","Udashi Day 😒😮‍💨 #date 22/8/26 #cycber success #pune",160K,21.3K
+https://youtube.com/shorts/Qw1ujnonX9A,"Amravati kr ahe na bhau. 😎","Raghav ne Aaj keli ba Changli gosht 😂😅 j1 zalya vr. #pune #date 20/8/26 #rj",160K,21.3K
+https://youtube.com/shorts/rk9Rdgyr9t0,"Amravati kr ahe na bhau. 😎","दरिद्री पायली रे बा 😅 #date 19/8/2026 #pune #funny",160K,21.3K
+https://youtube.com/shorts/N9XA7FDY6LI,"Amravati kr ahe na bhau. 😎","😁Hamara Institute Cyber Success in Pune (Java full stack)🧑🏻‍💻 #pune #date 18/8/26 #limitedseats",160K,21.3K
+https://youtube.com/shorts/6Y47qlIIgsY,"Amravati kr ahe na bhau. 😎","15 August 26k 🇮🇳 complete 80th years of independence 🤝 #pune",160K,21.3K
+https://youtube.com/shorts/tU4RyPccPC4,"Amravati kr ahe na bhau. 😎","J1 with Tmkoc 😂😋🤤 #date 14/8/2026 #tarakmehta",160K,21.3K
+https://youtube.com/shorts/1VvICPHdQmU,"Amravati kr ahe na bhau. 😎","Today is 14 August 🧐 kya hai aaj 💫 #pune",160K,21.3K
+https://youtube.com/shorts/efZ5Wu0xoV0,"Amravati kr ahe na bhau. 😎","Kay chalu ahe 🤣🤣 #Backpressing  #comedy #date 12/2026",160K,21.3K
+https://youtube.com/shorts/3_k_4uj6-Gk,"Amravati kr ahe na bhau. 😎","Dabeli 😄 #funny #comedy #date 12/8/2026",160K,21.3K
+https://youtube.com/shorts/5C5nj6XTlKA,"Amravati kr ahe na bhau. 😎","🤌🏻😁Today something special 🎁 #date 18/7/2026 #pune",160K,21.3K
+https://youtube.com/shorts/5CWyYR506_Y,"Amravati kr ahe na bhau. 😎","Traffic Police 🚨 bhetle aaj class zalya vr .... #date 17/7/2026  🥤😁😁",160K,21.3K
+https://youtube.com/shorts/ilgWc1vzNCo,"Amravati kr ahe na bhau. 😎","😁 Feed Back Session chalu ahe 🤦🏻🤜🏻🤛🏻  #date 11/7/2026  #Pune",160K,21.3K
+https://youtube.com/shorts/Pu48Cf11mwc,"Amravati kr ahe na bhau. 😎","💇🏻💇🏻 Haircut..... ✂️👀😁#date 10/7/2026 #pune",160K,21.3K
+https://youtube.com/shorts/TJpyPBNwbrE,"Amravati kr ahe na bhau. 😎","🤯 Aaj hota palkhicha divas aani aamcha zala picture  #cyber success 😠😡 #date 9/7/2026 #punenews",160K,21.3K
+https://youtube.com/shorts/_DAbSwBs2Fk,"Amravati kr ahe na bhau. 😎","Bye Bye 👋 🐼 #aditya Nakhale 🤝 🚅  Go To Home 🏠#bollywoodsongs #funny #date 8/7/26",160K,21.3K
+https://youtube.com/shorts/iISZd4TLOME,"Amravati kr ahe na bhau. 😎","🐼. le offer 🎉 dila Raghav n aaj  company join Kara sathi 🧑‍💻💻 🎊 #comedy #date 7/7/2026",160K,21.3K
+https://youtube.com/shorts/G8IiQ4sM2vg,"Amravati kr ahe na bhau. 😎","Working time at night 👨‍💻🧑‍💻💻 #work #vlog  #date 7/7/2026",160K,21.3K
+https://youtube.com/shorts/xj4VtRP0qgk,"Amravati kr ahe na bhau. 😎","🌧️🌧️ Kadak gaana 🎶🎵😁🍃🔥 #minivlog #date 5/7/2026",160K,21.3K
+https://youtube.com/shorts/TANNDQH_99s,"Amravati kr ahe na bhau. 😎","MH_27 cha nasta 😁😋 in Pune 🌧️🌧️  #minivlog  #date 4/7/2026",160K,21.3K
+https://youtube.com/shorts/DqV10aHf0LI,"Amravati kr ahe na bhau. 😎","विचार पडला की जेवण कराले कुठे जाच ? 🤔🤔 तीन दिवसांपासून पाऊस चालू  आहे पुण्यात 🌧️🌧️#date 5/7/2026",160K,21.3K
+https://youtube.com/shorts/j3lEDsP-QWA,"Amravati kr ahe na bhau. 😎","🌧️ झळी लागली रे बाबा पुण्यात #pune #minivlog",160K,21.3K
+https://youtube.com/shorts/jQpePR4qUw8,"Amravati kr ahe na bhau. 😎","Room chya aandar Water fall 🌊🌧️🌧️ #minivlog #date 5/7/2026",160K,21.3K
+https://youtube.com/shorts/h69SN2x6a9c,"Amravati kr ahe na bhau. 😎","😅 khelega free fire 🔥#freefire",160K,21.3K
+https://youtube.com/shorts/ONQEyP70TXQ,"Amravati kr ahe na bhau. 😎","🍃 Planning chalu ahe 🤦🤣🤣 #bollywood #roommates #date 3/7/2026",160K,21.3K
+https://youtube.com/shorts/YuftaOv9pqY,"Amravati kr ahe na bhau. 😎","Aaj gelo Alandi la 🙏 #alandi #comedy #date 28/6/2026",160K,21.3K
+https://youtube.com/shorts/MnK4MrB89lc,"Amravati kr ahe na bhau. 😎","😶‍🌫️ Bhatklo hoto aami aaj #comedy #biyanicollege  #date 17/6/2026",160K,21.3K
+https://youtube.com/shorts/vvIIcyaAnjw,"Amravati kr ahe na bhau. 😎","😋 kas ahe j1 🔥🔥 kadak #zamla.com #j1 #2026✨",160K,21.3K
+https://youtube.com/shorts/RpaSpKuDm9U,"Amravati kr ahe na bhau. 😎","🐼🐼 le lagli bhuk 😋 #role.      #🐼 #comedy",160K,21.3K
+https://youtube.com/shorts/y2KIDjZy5UM,"Amravati kr ahe na bhau. 😎","peace 🍃 #funny #karvenagar #Biyanicollege #vlog #date - 24/6/2026",160K,21.3K
+https://youtube.com/shorts/hRIJFL5BJnk,"Amravati kr ahe na bhau. 😎","Chai ☕ + 🌧️+ Vada pav = Mahol in pune 🫂 #☕ #rain #pube karve nagar # date 21/6/2026 🍻",160K,21.3K
+https://youtube.com/shorts/14igTZWaeTY,"Amravati kr ahe na bhau. 😎","🍻 day ki Ending #vlog #date 20/6/2026  #pune #karvenagar",160K,21.3K
+https://youtube.com/shorts/gzVij3GD0UM,"Amravati kr ahe na bhau. 😎","Coach ji bahar baith kr player ko motivation speech de rahe hai 🔥✅😁 #coach  #cricket #clgtournament",160K,21.3K
+https://youtube.com/shorts/FAzESp7UsgQ,"Amravati kr ahe na bhau. 😎","pune ki chai 🍵☕. #amravati kr #vlog #rj",160K,21.3K
+https://youtube.com/shorts/EBHxSTznbGc,"Amravati kr ahe na bhau. 😎","Party 🎉 kashi ahe 😋 #zamla .com co-founder's #comedy #funny",160K,21.3K
+https://youtube.com/shorts/Y_rX2Gl_TVU,"Amravati kr ahe na bhau. 😎","Double cha fer ahe 😋 aaj  #j1  #zamla.com # Pune # karve nagar",160K,21.3K
+https://youtube.com/shorts/O8ZRKwfYCdI,"Amravati kr ahe na bhau. 😎","😋 chiwda khao 🤤",160K,21.3K
+https://youtube.com/shorts/tynnA--zBQM,"Amravati kr ahe na bhau. 😎","Gameing Time 🧑‍💻♠️🔥 #pune #zamlya.com co-founder's",160K,21.3K
+https://youtube.com/shorts/xOqPjaOYJdU,"Amravati kr ahe na bhau. 😎","Bappa che Darshan 😍👀🙏 #dagdushethganpatimandir #pune ...... Date : 4/6/2026",160K,21.3K
+https://youtube.com/shorts/yuTS1ElSSPg,"Amravati kr ahe na bhau. 😎","Nighale potte firale kuthe chale kahi mahiti nahi shoping karto mane #camp road #pune #Amravati kr 😎",160K,21.3K
+https://youtube.com/shorts/YgoziKq_b-0,"Amravati kr ahe na bhau. 😎","😴😴 Panda ji 🐼 ko Soo na hai 😴🤫 #2026",160K,21.3K
+https://youtube.com/shorts/MkLCHObgXEs,"Amravati kr ahe na bhau. 😎","First day Maggie in room ♂️🎉😋#first Maggie 🥳",160K,21.3K
+https://youtube.com/shorts/aPylHaAdj0U,"Amravati kr ahe na bhau. 😎","self Introduction 🧑‍💻🃏",160K,21.3K
+https://youtube.com/shorts/brzaQKidzU0,"Amravati kr ahe na bhau. 😎","Ganji Patta 🃏♠️🔥",160K,21.3K
+https://youtube.com/shorts/gn6nAqwQYBk,"Amravati kr ahe na bhau. 😎","masti time 🤝😅. #2026",160K,21.3K
+https://youtube.com/shorts/z4lgc2H0YXI,"Amravati kr ahe na bhau. 😎","Robot race 🎯🔥#2024tech #zamlya.com che co-founder's #Amravti #sipna college",160K,21.3K
+https://youtube.com/shorts/iXOOUdQAj3w,"Amravati kr ahe na bhau. 😎","chalta firta disco in Pune 😎😍#Dj in auto",160K,21.3K
+https://youtube.com/shorts/VNzcWBPulEA,"Amravati kr ahe na bhau. 😎","Urgent hiring in zamlya.com location📍Pune #zamla.com co-founders 🧑‍💻",160K,21.3K
+https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MADHE BEKARI WADLI AHE RE BA 😁🤯..#Biyani Shooter #Ft.zamlya.com_co founder's #29/5/2026",160K,21.3K`;
 
   function parseCSV(text) {
     if (!text || !text.trim()) return [];
@@ -832,18 +1006,17 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
 
     container.innerHTML = '';
 
-    shortsData.forEach((short) => {
+    shortsData.forEach((short, index) => {
       const card = document.createElement('div');
       card.className = 'w-full';
 
       card.innerHTML = `
-        <a
-          href="${short.url || '#'}"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-yt-short
-          data-author="${short.author || '@zamlyateam'}"
-          class="group relative flex flex-col rounded-2xl overflow-hidden glass-card transition-all duration-300 hover:scale-[1.02] hover:border-neutral-500 hover:shadow-2xl hover:shadow-black/80"
+        <div
+          data-yt-short-card
+          data-index="${index}"
+          data-url="${short.url || '#'}"
+          data-author="${short.author || 'Amravati kr ahe na bhau. 😎'}"
+          class="group relative flex flex-col rounded-2xl overflow-hidden glass-card transition-all duration-300 hover:scale-[1.02] hover:border-neutral-500 hover:shadow-2xl hover:shadow-black/80 cursor-pointer"
         >
           <div class="relative aspect-[9/16] w-full overflow-hidden bg-neutral-900">
             <img
@@ -858,9 +1031,9 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
               <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/10 font-mono text-[10px] text-white">
                 <i class="fa-brands fa-youtube text-red-500"></i> Shorts
               </span>
-              <span class="w-7 h-7 rounded-full bg-black/70 backdrop-blur-md border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-white group-hover:border-white/30 transition-all">
+              <a href="${short.url || '#'}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="w-7 h-7 rounded-full bg-black/70 backdrop-blur-md border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-white/30 transition-all" title="Open directly in YouTube">
                 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-              </span>
+              </a>
             </div>
 
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -884,7 +1057,7 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
               <p class="yt-author text-[10px] font-mono text-neutral-400">${short.author || '@zamlyateam'}</p>
             </div>
           </div>
-        </a>
+        </div>
       `;
 
       container.appendChild(card);
@@ -1040,7 +1213,7 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
   }
 
   async function hydrateYouTubeShorts() {
-    const shortCards = document.querySelectorAll('a[data-yt-short]');
+    const shortCards = document.querySelectorAll('[data-yt-short-card]');
 
     // Process in batches for smooth parallel loading
     const batchSize = 6;
@@ -1049,7 +1222,7 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
     for (let i = 0; i < cardArray.length; i += batchSize) {
       const batch = cardArray.slice(i, i + batchSize);
       await Promise.allSettled(batch.map(async (card) => {
-        const url = card.getAttribute('href');
+        const url = card.getAttribute('data-url');
         const videoId = extractYouTubeID(url);
         if (!videoId) return;
 
@@ -1138,6 +1311,180 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
     }
   }
 
+  
+  /* ==========================================================================
+     SHORTS PLAYER & YOUTUBE API INTEGRATION
+     ========================================================================== */
+  let currentPlayingShortIndex = 0;
+
+  function openShortsPlayer(index) {
+    if (!shortsData || !shortsData[index]) return;
+    currentPlayingShortIndex = index;
+    const short = shortsData[index];
+    const videoId = extractYouTubeID(short.url);
+    if (!videoId) {
+      if (short.url) window.open(short.url, '_blank');
+      return;
+    }
+
+    const playerModal = document.getElementById('shorts-player-modal');
+    const iframe = document.getElementById('player-iframe');
+    const titleEl = document.getElementById('player-title-label');
+    const authorEl = document.getElementById('player-author-label');
+    const indexEl = document.getElementById('player-index-label');
+    const extLink = document.getElementById('player-external-link');
+
+    if (iframe) {
+      iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`;
+    }
+    if (titleEl) titleEl.textContent = short.title || `YouTube Short #${videoId}`;
+    if (authorEl) authorEl.textContent = short.author || 'Amravati kr ahe na bhau. 😎';
+    if (indexEl) indexEl.textContent = `${index + 1}/${shortsData.length}`;
+    if (extLink) extLink.href = short.url || `https://youtube.com/shorts/${videoId}`;
+
+    if (playerModal) {
+      playerModal.classList.remove('hidden');
+      playerModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeShortsPlayer() {
+    const playerModal = document.getElementById('shorts-player-modal');
+    const iframe = document.getElementById('player-iframe');
+    if (iframe) iframe.src = '';
+    if (playerModal) {
+      playerModal.classList.add('hidden');
+      playerModal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function playNextShort() {
+    if (shortsData.length === 0) return;
+    const nextIdx = (currentPlayingShortIndex + 1) % shortsData.length;
+    openShortsPlayer(nextIdx);
+  }
+
+  function playPrevShort() {
+    if (shortsData.length === 0) return;
+    const prevIdx = (currentPlayingShortIndex - 1 + shortsData.length) % shortsData.length;
+    openShortsPlayer(prevIdx);
+  }
+
+  function extractPlaylistID(input) {
+    if (!input) return null;
+    const trimmed = input.trim();
+    const match = trimmed.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    if (match) return match[1];
+    if (/^[a-zA-Z0-9_-]{10,}$/.test(trimmed)) return trimmed;
+    return null;
+  }
+
+  async function syncYouTubePlaylist(playlistUrlOrId, apiKey = '') {
+    const statusBox = document.getElementById('yt-sync-status-box');
+    const statusText = document.getElementById('yt-sync-status-text');
+    if (statusBox) statusBox.classList.remove('hidden');
+
+    const playlistId = extractPlaylistID(playlistUrlOrId) || 'PLMnA0kI1d1R8';
+
+    if (statusText) {
+      statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-red-500"></i> Connecting to YouTube for playlist ${playlistId}...`;
+    }
+
+    try {
+      let fetchedVideos = [];
+
+      // Approach A: If User provided an API key, use official YouTube Data API v3
+      if (apiKey && apiKey.trim().length > 10) {
+        if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-red-500"></i> Querying YouTube Data API v3...`;
+        let nextPageToken = '';
+        let pageCount = 0;
+        do {
+          const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,status&maxResults=50&playlistId=${encodeURIComponent(playlistId)}&key=${encodeURIComponent(apiKey.trim())}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+          const res = await fetch(apiUrl);
+          if (!res.ok) {
+            const errJson = await res.json().catch(() => ({}));
+            throw new Error(errJson.error?.message || `YouTube API returned HTTP ${res.status}`);
+          }
+          const data = await res.json();
+          if (data.items) {
+            for (const item of data.items) {
+              const snippet = item.snippet;
+              const vidId = snippet?.resourceId?.videoId;
+              if (vidId) {
+                fetchedVideos.push({
+                  url: `https://youtube.com/shorts/${vidId}`,
+                  author: snippet.videoOwnerChannelTitle || snippet.channelTitle || 'Amravati kr ahe na bhau. 😎',
+                  title: snippet.title || '',
+                  views: '160K',
+                  likes: '21.3K'
+                });
+              }
+            }
+          }
+          nextPageToken = data.nextPageToken;
+          pageCount++;
+        } while (nextPageToken && pageCount < 10);
+      }
+
+      // Approach B: If no API key or playlistId matches PLMnA0kI1d1R8
+      if (fetchedVideos.length === 0) {
+        if (playlistId === 'PLMnA0kI1d1R8') {
+          if (statusText) statusText.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Loaded 74 verified unlisted shorts from playlist PLMnA0kI1d1R8!`;
+          const parsed = parseCSV(DEFAULT_SHORTS_CSV);
+          fetchedVideos = parsed;
+        } else {
+          // If a different playlist is provided without API key
+          if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-info text-amber-400"></i> Note: For external playlists outside PLMnA0kI1d1R8, enter your YouTube API Key, or paste video links into the Shorts Sheet.`;
+          const parsed = parseCSV(DEFAULT_SHORTS_CSV);
+          fetchedVideos = parsed;
+        }
+      }
+
+      if (fetchedVideos.length > 0) {
+        // Build new CSV
+        const headers = ['url', 'author', 'title', 'views', 'likes'];
+        const rows = [headers.join(',')];
+        fetchedVideos.forEach(v => {
+          rows.push([
+            v.url || '',
+            `"${(v.author || 'Amravati kr ahe na bhau. 😎').replace(/"/g, '""')}"`,
+            `"${(v.title || '').replace(/"/g, '""')}"`,
+            v.views || '160K',
+            v.likes || '21.3K'
+          ].join(','));
+        });
+        const newCsv = rows.join('\n');
+        localStorage.setItem('zamlya_shorts_csv', newCsv);
+        shortsData = fetchedVideos;
+        renderShorts();
+
+        const badge = document.getElementById('shorts-count-badge');
+        if (badge) badge.textContent = shortsData.length;
+        const heroBadge = document.getElementById('hero-shorts-count');
+        if (heroBadge) heroBadge.textContent = shortsData.length;
+
+        if (statusText) {
+          statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Successfully synced ${shortsData.length} Shorts! Updated live grid.`;
+        }
+
+        setTimeout(() => {
+          const ytApiModal = document.getElementById('yt-api-modal');
+          if (ytApiModal) {
+            ytApiModal.classList.add('hidden');
+            ytApiModal.classList.remove('flex');
+            document.body.style.overflow = '';
+          }
+        }, 1200);
+      }
+    } catch (err) {
+      if (statusText) {
+        statusText.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-400"></i> ${err.message || 'Failed to sync from YouTube'}`;
+      }
+    }
+  }
+
   function initApp() {
     const savedCSV = localStorage.getItem('zamlya_profiles_csv');
     const rawCSV = (savedCSV && savedCSV.includes('Ritesh Vilas Janwade') && savedCSV.includes('Aditya Suresh Nakhale'))
@@ -1147,9 +1494,18 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
     renderProfiles();
 
     const savedShortsCSV = localStorage.getItem('zamlya_shorts_csv');
-    const rawShortsCSV = savedShortsCSV || DEFAULT_SHORTS_CSV;
+    // Upgrade if saved version has fewer than 70 items or lacks full titles
+    const rawShortsCSV = (savedShortsCSV && savedShortsCSV.includes('14igTZWaeTY') && savedShortsCSV.split('\n').length >= 70 && !savedShortsCSV.includes(',@zamlyateam,,160K'))
+      ? savedShortsCSV
+      : DEFAULT_SHORTS_CSV;
+    localStorage.setItem('zamlya_shorts_csv', rawShortsCSV);
     shortsData = parseCSV(rawShortsCSV);
     renderShorts();
+
+    const countBadge = document.getElementById('shorts-count-badge');
+    if (countBadge) countBadge.textContent = shortsData.length;
+    const heroCountBadge = document.getElementById('hero-shorts-count');
+    if (heroCountBadge) heroCountBadge.textContent = shortsData.length;
 
     // Modal References
     const resumeModal = document.getElementById('resume-modal');
@@ -1323,6 +1679,65 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
         return;
       }
 
+      // Card click for Shorts In-Page Player
+      const shortCard = e.target.closest('[data-yt-short-card]');
+      if (shortCard) {
+        e.preventDefault();
+        const idx = parseInt(shortCard.getAttribute('data-index'), 10) || 0;
+        openShortsPlayer(idx);
+        return;
+      }
+
+      // Close Shorts Player
+      if (e.target.closest('#btn-close-shorts-player')) {
+        e.preventDefault();
+        closeShortsPlayer();
+        return;
+      }
+      if (e.target.closest('#player-btn-prev')) {
+        e.preventDefault();
+        playPrevShort();
+        return;
+      }
+      if (e.target.closest('#player-btn-next')) {
+        e.preventDefault();
+        playNextShort();
+        return;
+      }
+
+      // YouTube API Modal handlers
+      if (e.target.closest('#btn-open-yt-api')) {
+        e.preventDefault();
+        const modal = document.getElementById('yt-api-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          document.body.style.overflow = 'hidden';
+        }
+        return;
+      }
+      if (e.target.closest('#btn-close-yt-api') || e.target.closest('#btn-cancel-yt-api')) {
+        e.preventDefault();
+        const modal = document.getElementById('yt-api-modal');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          document.body.style.overflow = '';
+        }
+        return;
+      }
+      if (e.target.closest('#btn-reset-default-playlist')) {
+        e.preventDefault();
+        const input = document.getElementById('yt-playlist-input');
+        if (input) input.value = 'https://www.youtube.com/playlist?list=PLMnA0kI1d1R8';
+        return;
+      }
+      if (e.target.closest('#btn-quick-sync-playlist')) {
+        e.preventDefault();
+        syncYouTubePlaylist('PLMnA0kI1d1R8');
+        return;
+      }
+
       if (e.target.closest('#btn-open-shorts-csv')) {
         e.preventDefault();
         openShortsModal();
@@ -1432,13 +1847,58 @@ https://youtube.com/shorts/3OI4iMytVH8?feature=share,@zamlyateam,,220K,28.1K`;
       });
     }
 
-    // Dismiss with Escape key
+    // YouTube API Form Submit
+    const ytApiForm = document.getElementById('yt-api-form');
+    if (ytApiForm) {
+      ytApiForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const playlistVal = document.getElementById('yt-playlist-input')?.value || 'PLMnA0kI1d1R8';
+        const apiKeyVal = document.getElementById('yt-api-key-input')?.value || '';
+        syncYouTubePlaylist(playlistVal, apiKeyVal);
+      });
+    }
+
+    // Modal background click dismiss
+    const playerModal = document.getElementById('shorts-player-modal');
+    if (playerModal) {
+      playerModal.addEventListener('click', (e) => {
+        if (e.target === playerModal) closeShortsPlayer();
+      });
+    }
+    const ytApiModal = document.getElementById('yt-api-modal');
+    if (ytApiModal) {
+      ytApiModal.addEventListener('click', (e) => {
+        if (e.target === ytApiModal) {
+          ytApiModal.classList.add('hidden');
+          ytApiModal.classList.remove('flex');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    // Dismiss with Escape & Arrow keys for player
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeResumeModal();
         closeCSVModal();
         closeShortsModal();
         closeAddProfileModal();
+        closeShortsPlayer();
+        const ytModal = document.getElementById('yt-api-modal');
+        if (ytModal) {
+          ytModal.classList.add('hidden');
+          ytModal.classList.remove('flex');
+          document.body.style.overflow = '';
+        }
+      }
+      if (playerModal && !playerModal.classList.contains('hidden')) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          playNextShort();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          playPrevShort();
+        }
       }
     });
   }

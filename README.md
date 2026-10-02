@@ -1,4 +1,4 @@
-```markdown
+
 # Zamlya.com — Developer Portfolios & Technical Shorts Stream
 
 Zamlya.com is a static web platform showcasing technical engineering portfolios, full-stack systems architecture, and a curated feed of technical and vlog shorts. Founded and engineered by three BCA friends, the platform combines interactive portfolio dossiers rendered dynamically from CSV data with a synchronized YouTube Shorts stream.

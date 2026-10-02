@@ -1,33 +1,33 @@
+```markdown
 # Zamlya.com — Developer Portfolios & Technical Shorts Stream
 
-Zamlya.com is a web platform showcasing technical engineering portfolios, full-stack systems architecture, and a curated feed of technical and vlog shorts. Founded and engineered by three BCA friends, the platform combines interactive portfolio dossiers rendered dynamically from CSV data with a synchronized YouTube Shorts stream.
+Zamlya.com is a static web platform showcasing technical engineering portfolios, full-stack systems architecture, and a curated feed of technical and vlog shorts. Founded and engineered by three BCA friends, the platform combines interactive portfolio dossiers rendered dynamically from CSV data with a synchronized YouTube Shorts stream.
 
 ---
 
 ## 🚀 Key Features
 
-* **Dynamic CSV Portfolios:** Interactive developer profiles with CV modal viewports rendered directly from structured CSV data.
-* **Curated YouTube Shorts Stream:** Live synchronized feed of shorts featuring vertical video playback, modal previews, and YouTube Data API synchronization.
-* **Fast Modern Tooling:** Bundled with Vite and built with TypeScript/HTML5 for lightweight, fast static delivery.
-* **GitHub Pages Deployment:** Continuous deployment configured directly from the main branch.
+- **Dynamic CSV Portfolios:** Interactive developer profiles with CV modal viewports rendered directly from structured CSV data.
+- **Curated YouTube Shorts Stream:** Live synchronized feed of shorts featuring vertical video playback, modal previews, and YouTube Data API synchronization.
+- **No Setup Required:** Pure frontend build using HTML5, modern CSS, and vanilla JavaScript—runs directly out of the box.
+- **GitHub Pages Hosted:** Automatically served via GitHub Pages.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** HTML5, CSS3, JavaScript / TypeScript
-* **Tooling & Bundler:** Vite
-* **Data Source:** CSV Profile Datasets & YouTube Data API v3
-* **Hosting:** GitHub Pages
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Data Source:** CSV Profile Datasets & Embedded YouTube Stream
+- **Hosting:** GitHub Pages
 
 ---
 
 ## 👥 Core Team
 
-* **Aditya Suresh Nakhale** — CEO & Backend Developer (Node.js, Nest.js, Next.js, PostgreSQL, Prisma ORM, Java)
-* **Parth Khadke** — Founder & Full-Stack Developer (Python, JavaScript, MySQL, REST APIs)
-* **Ritesh Vilas Janwade** — Co-Founder & Java Developer (Core Java, Spring Boot, Spring MVC, JPA/Hibernate)
-* **Raghav Deole** — Digital Marketing & Organic SEO Specialist
+- **Aditya Suresh Nakhale** — CEO & Backend Developer (Node.js, Nest.js, Next.js, PostgreSQL, Prisma ORM, Java)
+- **Parth Khadke** — Founder & Full-Stack Developer (Python, JavaScript, MySQL, REST APIs)
+- **Ritesh Vilas Janwade** — Co-Founder & Java Developer (Core Java, Spring Boot, Spring MVC, JPA/Hibernate)
+- **Raghav Deole** — Digital Marketing & Organic SEO Specialist
 
 ---
 
@@ -38,61 +38,35 @@ Zamlya.com is a web platform showcasing technical engineering portfolios, full-s
 ├── public/             # Static public assets (icons, metadata)
 │   └── favicon.svg     # Project favicon
 ├── src/                # Core frontend scripts and styles
-├── .env.example        # Environment variable template (YouTube API key)
 ├── index.html          # Main application markup & feed layout
 ├── metadata.json       # Project configurations
-├── package.json        # Dependencies and build commands
-├── tsconfig.json       # TypeScript configuration
-└── vite.config.ts      # Vite bundler configuration
+└── README.md           # Documentation
 
 ```
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ How to Run Locally
 
-### Prerequisites
+Because this is a static frontend project, there are no dependencies to install (`npm install` is not required) and no environment variables to configure:
 
-* Node.js (v18.0.0 or higher recommended)
-* npm or yarn
-
-### Installation & Setup
-
-1. **Clone the repository:**
+1. **Clone or Download the Repository:**
 ```bash
-git clone https://github.com/AdityaNakhale/Zamlya.com.git
+git clone [https://github.com/AdityaNakhale/Zamlya.com.git](https://github.com/AdityaNakhale/Zamlya.com.git)
 cd Zamlya.com
 
 ```
 
 
-2. **Install project dependencies:**
+2. **Open in Browser:**
+* Double-click `index.html` to open it in your default web browser, or:
+* Serve it using any lightweight static server (such as the VS Code *Live Server* extension or Python):
 ```bash
-npm install
+python -m http.server 8000
 
 ```
 
 
-3. **Configure Environment Variables:**
-```bash
-cp .env.example .env
-
-```
-
-
-Provide your YouTube Data API key inside `.env` if enabling custom API sync.
-4. **Launch development server:**
-```bash
-npm run dev
-
-```
-
-
-5. **Build for production:**
-```bash
-npm run build
-
-```
 
 
 
@@ -100,4 +74,10 @@ npm run build
 
 ## 🌐 Live Website
 
-* **Production URL:** [https://adityanakhale.github.io/Zamlya.com/](https://adityanakhale.github.io/Zamlya.com/)
+Access the hosted version online:
+
+* **Live Demo:** [Zamlya.com on GitHub Pages](https://adityanakhale.github.io/Zamlya.com/)
+
+```
+
+```

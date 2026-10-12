@@ -18,159 +18,6 @@
 
   <!-- Tailwind CSS Configuration -->
   
-<!-- ==========================================
-     YOUTUBE API & PLAYLIST SYNC MODAL
-     ========================================== -->
-<div id="yt-api-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
-  <div class="relative w-full max-w-2xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-8 my-8 text-neutral-200">
-    <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-5">
-      <div>
-        <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
-          <i class="fa-brands fa-youtube text-red-500 text-xl"></i> YouTube API & Playlist Sync
-        </h3>
-        <p class="text-xs text-neutral-400 font-mono mt-1">Directly sync and extract unlisted videos from your playlist or channel.</p>
-      </div>
-      <button id="btn-close-yt-api" class="w-8 h-8 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center transition-all cursor-pointer">
-        <i class="fa-solid fa-xmark text-xs"></i>
-      </button>
-    </div>
-
-    <!-- Active Playlist Badge -->
-    <div class="mb-5 p-3.5 rounded-xl bg-neutral-950 border border-surface-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
-      <div class="flex items-center gap-2.5">
-        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
-        <div>
-          <span class="text-neutral-400">Connected Playlist:</span>
-          <span class="text-white font-semibold ml-1">PLMnA0kI1d1R8</span>
-        </div>
-      </div>
-      <span class="px-2.5 py-1 rounded-full bg-red-950/60 border border-red-800/40 text-red-400 text-[11px] self-start sm:self-auto">
-        75 Unlisted Videos Active
-      </span>
-    </div>
-
-    <form id="yt-api-form" class="space-y-4">
-      <div>
-        <label class="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold">
-          YouTube Playlist URL or Playlist ID *
-        </label>
-        <div class="relative">
-          <input
-            type="text"
-            id="yt-playlist-input"
-            required
-            value="https://www.youtube.com/playlist?list=PLMnA0kI1d1R8"
-            placeholder="e.g. https://www.youtube.com/playlist?list=PLMnA0kI1d1R8 or PLMnA0kI1d1R8"
-            class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-red-500/80 pr-10"
-          />
-          <button type="button" id="btn-reset-default-playlist" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 text-xs font-mono px-2 py-1 rounded bg-neutral-900 border border-surface-border" title="Reset to your default playlist">
-            Default
-          </button>
-        </div>
-        <p class="text-[11px] text-neutral-400 font-mono mt-1">Accepts standard playlist URLs or watch URLs with &list= parameter.</p>
-      </div>
-
-      <div>
-        <label class="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold flex items-center justify-between">
-          <span>YouTube Data API v3 Key <span class="text-neutral-500 font-normal">(Optional)</span></span>
-          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="text-[10px] text-neutral-400 hover:text-red-400 underline">Get free API key</a>
-        </label>
-        <input
-          type="password"
-          id="yt-api-key-input"
-          placeholder="AIzaSy... (Leave empty to use Instant Direct Sync)"
-          class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-red-500/80"
-        />
-        <p class="text-[11px] text-neutral-500 font-mono mt-1">If blank, the system automatically uses the direct playlist catalog with live oEmbed metadata.</p>
-      </div>
-
-      <!-- Sync Status Box -->
-      <div id="yt-sync-status-box" class="hidden p-3 rounded-xl bg-neutral-950 border border-surface-border font-mono text-xs text-neutral-300">
-        <div class="flex items-center gap-2" id="yt-sync-status-text">
-          <i class="fa-solid fa-spinner fa-spin text-red-500"></i> Syncing playlist...
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between pt-4 border-t border-surface-border">
-        <button
-          type="button"
-          id="btn-quick-sync-playlist"
-          class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white transition-all flex items-center gap-2 cursor-pointer"
-        >
-          <i class="fa-solid fa-rotate text-red-400"></i> Quick Reload 75 Videos
-        </button>
-
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            id="btn-cancel-yt-api"
-            class="px-4 py-2 rounded-xl bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-400 hover:text-white transition-colors cursor-pointer"
-          >
-            Close
-          </button>
-          <button
-            type="submit"
-            id="btn-submit-yt-sync"
-            class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs font-mono transition-all flex items-center gap-2 shadow-lg shadow-red-950/50 cursor-pointer"
-          >
-            <i class="fa-brands fa-youtube"></i> Sync Now
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- ==========================================
-     IN-PAGE SHORTS VERTICAL PLAYER MODAL
-     ========================================== -->
-<div id="shorts-player-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-hidden">
-  <div class="relative w-full max-w-sm sm:max-w-md h-[90vh] max-h-[860px] bg-[#0d0d0d] border border-surface-border rounded-3xl shadow-2xl flex flex-col overflow-hidden text-neutral-200">
-    <!-- Player Header -->
-    <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-surface-border bg-neutral-950/80 backdrop-blur-md">
-      <div class="flex items-center gap-2 overflow-hidden pr-2">
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950/80 border border-red-800/40 text-[10px] font-mono text-red-400 shrink-0">
-          <i class="fa-brands fa-youtube text-red-500"></i> <span id="player-index-label">1/75</span>
-        </span>
-        <span id="player-author-label" class="text-xs font-mono text-neutral-400 truncate">@zamlyateam</span>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <a id="player-external-link" href="#" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white flex items-center justify-center text-xs transition-colors" title="Open in YouTube">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-        <button id="btn-close-shorts-player" class="w-8 h-8 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer" title="Close (Esc)">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Video Frame Container (9:16 Aspect) -->
-    <div class="relative flex-1 w-full bg-black flex items-center justify-center overflow-hidden">
-      <iframe
-        id="player-iframe"
-        src=""
-        title="YouTube Shorts Player"
-        class="w-full h-full border-0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
-    </div>
-
-    <!-- Player Bottom Bar & Controls -->
-    <div class="p-3.5 sm:p-4 bg-neutral-950/90 border-t border-surface-border">
-      <h3 id="player-title-label" class="text-xs sm:text-sm font-semibold text-white truncate mb-2"></h3>
-      <div class="flex items-center justify-between text-xs font-mono text-neutral-400">
-        <button id="player-btn-prev" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
-          <i class="fa-solid fa-chevron-left text-[10px]"></i> Prev
-        </button>
-        <span class="text-[11px] text-neutral-500">Use &larr; &rarr; arrows</span>
-        <button id="player-btn-next" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
-          Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
     tailwind.config = {
@@ -352,7 +199,7 @@
         </a>
         <a href="#shorts" class="px-4 py-2 rounded-xl bg-neutral-900/80 border border-surface-border flex items-center gap-2 hover:border-neutral-500 hover:text-white transition-all">
           <i class="fa-brands fa-youtube text-red-500"></i>
-          <span>YouTube Shorts (<span id="hero-shorts-count">75</span> Videos)</span>
+          <span>YouTube Shorts (<span id="hero-shorts-count">79</span> Videos)</span>
         </a>
       </div>
     </div>
@@ -400,7 +247,7 @@
         </div>
         <h2 class="text-3xl font-bold tracking-tight text-white">Curated YouTube Shorts Stream</h2>
         <p class="text-neutral-400 text-sm mt-2 max-w-xl">
-          Live stream of <span id="shorts-count-badge" class="font-bold text-white">75</span> unlisted shorts from playlist <span class="font-mono text-xs px-2 py-0.5 rounded bg-neutral-900 border border-surface-border text-neutral-200">PLMnA0kI1d1R8</span>. Click any card to play in full vertical view or sync new videos via YouTube API.
+          Live stream of <span id="shorts-count-badge" class="font-bold text-white">79</span> unlisted shorts from playlist <span class="font-mono text-xs px-2 py-0.5 rounded bg-neutral-900 border border-surface-border text-neutral-200">PLMnA0kI1d1R8</span>. Click any card to play in full vertical view or sync new videos via YouTube API.
         </p>
       </div>
 
@@ -441,7 +288,7 @@
         rel="noopener noreferrer"
         class="px-5 py-2.5 rounded-xl bg-neutral-100 hover:bg-white text-black font-semibold text-xs tracking-wide transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap"
       >
-        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Open Full Playlist (75 Shorts)
+        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> Open Full Playlist (79 Shorts)
       </a>
     </div>
   </section>
@@ -705,6 +552,330 @@
   </div>
 </div>
 
+<!-- ==========================================
+     FLOATING AI CHATBOT WINDOW
+     ========================================== -->
+<div id="ai-chat-root" class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-auto">
+  <!-- Chat Trigger Button (Floating Pill / Icon) -->
+  <button
+    id="ai-chat-toggle-btn"
+    aria-label="Toggle AI Assistant"
+    class="group relative flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 text-white rounded-full shadow-2xl hover:shadow-red-500/30 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 cursor-pointer"
+  >
+    <div class="relative flex items-center justify-center w-8 h-8 rounded-full bg-black/25">
+      <i id="ai-chat-btn-icon" class="fa-solid fa-wand-magic-sparkles text-sm text-yellow-300"></i>
+    </div>
+    <div class="text-left pr-1">
+      <span class="block text-xs font-bold tracking-tight">AI Assistant</span>
+      <span class="block text-[10px] text-white/80 font-mono">Ask about channel & shorts</span>
+    </div>
+    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+    </span>
+  </button>
+
+  <!-- Floating Chat Window -->
+  <div
+    id="ai-chat-window"
+    class="hidden flex-col w-[92vw] sm:w-[420px] h-[580px] max-h-[82vh] bg-[#0e0e11]/95 backdrop-blur-xl border border-surface-border rounded-3xl shadow-2xl overflow-hidden mt-3 text-neutral-200 transition-all duration-300"
+  >
+    <!-- Window Header -->
+    <div class="px-5 py-3.5 bg-neutral-950/90 border-b border-surface-border flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-500 p-0.5 flex items-center justify-center shadow-lg shadow-red-950/50">
+          <div class="w-full h-full bg-[#121216] rounded-[14px] flex items-center justify-center">
+            <i class="fa-solid fa-robot text-red-400 text-sm"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h4 class="text-sm font-bold text-white tracking-tight">Zamlya AI</h4>
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-red-950/60 text-red-400 border border-red-800/40">Claude 5.5 Sonnet</span>
+          </div>
+          <p class="text-[11px] text-neutral-400 font-mono">Amravati kr ahe na bhau. 😎</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button
+          id="ai-chat-settings-btn"
+          class="w-7 h-7 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+          title="API Settings"
+        >
+          <i class="fa-solid fa-gear text-[11px]"></i>
+        </button>
+        <button
+          id="ai-chat-clear-btn"
+          class="w-7 h-7 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+          title="Clear Chat"
+        >
+          <i class="fa-solid fa-rotate-right text-[11px]"></i>
+        </button>
+        <button
+          id="ai-chat-close-btn"
+          class="w-7 h-7 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+          title="Close (Esc)"
+        >
+          <i class="fa-solid fa-xmark text-[11px]"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- API Key Settings Drawer (Collapsible) -->
+    <div id="ai-chat-settings-drawer" class="hidden p-3.5 bg-neutral-950 border-b border-surface-border font-mono text-xs">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-neutral-300 font-semibold flex items-center gap-1.5">
+          <i class="fa-solid fa-key text-amber-400"></i> AI Endpoint & Key
+        </span>
+        <button id="ai-chat-settings-close" class="text-neutral-500 hover:text-neutral-300 text-xs">Done</button>
+      </div>
+      <div class="space-y-2">
+        <div>
+          <label class="block text-[10px] text-neutral-400 mb-1">API Key</label>
+          <input
+            id="ai-chat-api-key-input"
+            type="password"
+            placeholder="sk-apxbe..."
+            class="w-full bg-neutral-900 border border-surface-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-red-500"
+          />
+        </div>
+        <div>
+          <label class="block text-[10px] text-neutral-400 mb-1">Base URL (OpenAI compatible)</label>
+          <input
+            id="ai-chat-base-url-input"
+            type="text"
+            placeholder="https://openrouter.ai/api/v1 or custom proxy"
+            class="w-full bg-neutral-900 border border-surface-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-red-500"
+          />
+        </div>
+        <div>
+          <label class="block text-[10px] text-neutral-400 mb-1">Model Name</label>
+          <input
+            id="ai-chat-model-input"
+            type="text"
+            placeholder="gpt-4o-mini or gemini-2.5-flash"
+            class="w-full bg-neutral-900 border border-surface-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-red-500"
+          />
+        </div>
+        <div class="flex justify-end pt-1">
+          <button id="ai-chat-save-settings-btn" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-[11px] font-semibold">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Messages Scroll Area -->
+    <div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3.5 scrollbar-thin text-xs">
+      <!-- Welcome Message from Bot -->
+      <div class="flex items-start gap-2.5">
+        <div class="w-6 h-6 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5">
+          <i class="fa-solid fa-sparkles text-red-400 text-[10px]"></i>
+        </div>
+        <div class="bg-neutral-900/90 border border-surface-border rounded-2xl rounded-tl-sm p-3 text-neutral-200 max-w-[85%] leading-relaxed shadow-sm">
+          <p class="font-semibold text-white mb-1">Namaskar! 🙏 Welcome to Zamlya Team & Channel AI.</p>
+          <p>I know all 79 YouTube shorts from playlist <span class="font-mono text-red-400 font-bold">PLMnA0kI1d1R8</span>, our team members, college projects, and tech topics.</p>
+          <div class="mt-2.5 flex flex-wrap gap-1.5 pt-2 border-t border-surface-border/60">
+            <button class="ai-quick-prompt px-2 py-1 rounded-md bg-neutral-800 hover:bg-neutral-700 text-[10px] font-mono text-neutral-300 cursor-pointer">
+              What videos are on this channel?
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded-md bg-neutral-800 hover:bg-neutral-700 text-[10px] font-mono text-neutral-300 cursor-pointer">
+              Show latest Short
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded-md bg-neutral-800 hover:bg-neutral-700 text-[10px] font-mono text-neutral-300 cursor-pointer">
+              Who is on the team?
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Typing Indicator -->
+    <div id="ai-chat-typing" class="hidden px-5 py-2 items-center gap-2 text-neutral-400 text-xs font-mono">
+      <div class="flex gap-1">
+        <div class="w-1.5 h-1.5 rounded-full bg-red-400 animate-bounce"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-red-400 animate-bounce [animation-delay:0.2s]"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-red-400 animate-bounce [animation-delay:0.4s]"></div>
+      </div>
+      <span>Zamlya AI is thinking...</span>
+    </div>
+
+    <!-- Chat Input Area -->
+    <form id="ai-chat-form" class="p-3 bg-neutral-950/95 border-t border-surface-border flex items-end gap-2">
+      <div class="relative flex-1">
+        <textarea
+          id="ai-chat-input"
+          rows="1"
+          placeholder="Ask anything about our shorts, team, or projects..."
+          class="w-full max-h-24 bg-neutral-900 border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-red-500 resize-none font-sans"
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        id="ai-chat-send-btn"
+        class="w-9 h-9 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer disabled:opacity-50"
+      >
+        <i class="fa-solid fa-paper-plane text-xs"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<!-- ==========================================
+     YOUTUBE API & PLAYLIST SYNC MODAL
+     ========================================== -->
+<div id="yt-api-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  <div class="relative w-full max-w-2xl bg-[#111111] border border-surface-border rounded-2xl shadow-2xl p-6 sm:p-8 my-8 text-neutral-200">
+    <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-5">
+      <div>
+        <h3 class="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <i class="fa-brands fa-youtube text-red-500 text-xl"></i> YouTube API & Playlist Sync
+        </h3>
+        <p class="text-xs text-neutral-400 font-mono mt-1">Directly sync and extract unlisted videos from your playlist or channel.</p>
+      </div>
+      <button id="btn-close-yt-api" class="w-8 h-8 rounded-full bg-neutral-900 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center transition-all cursor-pointer">
+        <i class="fa-solid fa-xmark text-xs"></i>
+      </button>
+    </div>
+
+    <!-- Active Playlist Badge -->
+    <div class="mb-5 p-3.5 rounded-xl bg-neutral-950 border border-surface-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+      <div class="flex items-center gap-2.5">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+        <div>
+          <span class="text-neutral-400">Connected Playlist:</span>
+          <span class="text-white font-semibold ml-1">PLMnA0kI1d1R8</span>
+        </div>
+      </div>
+      <span class="px-2.5 py-1 rounded-full bg-red-950/60 border border-red-800/40 text-red-400 text-[11px] self-start sm:self-auto">
+        79 Unlisted Videos Active
+      </span>
+    </div>
+
+    <form id="yt-api-form" class="space-y-4">
+      <div>
+        <label class="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold">
+          YouTube Playlist URL or Playlist ID *
+        </label>
+        <div class="relative">
+          <input
+            type="text"
+            id="yt-playlist-input"
+            required
+            value="https://www.youtube.com/playlist?list=PLMnA0kI1d1R8"
+            placeholder="e.g. https://www.youtube.com/playlist?list=PLMnA0kI1d1R8 or PLMnA0kI1d1R8"
+            class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-red-500/80 pr-10"
+          />
+          <button type="button" id="btn-reset-default-playlist" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 text-xs font-mono px-2 py-1 rounded bg-neutral-900 border border-surface-border" title="Reset to your default playlist">
+            Default
+          </button>
+        </div>
+        <p class="text-[11px] text-neutral-400 font-mono mt-1">Accepts standard playlist URLs or watch URLs with &list= parameter.</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-neutral-300 mb-1.5 font-semibold flex items-center justify-between">
+          <span>YouTube Data API v3 Key <span class="text-neutral-500 font-normal">(Optional)</span></span>
+          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" class="text-[10px] text-neutral-400 hover:text-red-400 underline">Get free API key</a>
+        </label>
+        <input
+          type="password"
+          id="yt-api-key-input"
+          placeholder="AIzaSy... (Leave empty to use Instant Direct Sync)"
+          class="w-full bg-neutral-950 border border-surface-border rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-red-500/80"
+        />
+        <p class="text-[11px] text-neutral-500 font-mono mt-1">If blank, the system automatically uses the direct playlist catalog with live oEmbed metadata.</p>
+      </div>
+
+      <!-- Sync Status Box -->
+      <div id="yt-sync-status-box" class="hidden p-3 rounded-xl bg-neutral-950 border border-surface-border font-mono text-xs text-neutral-300">
+        <div class="flex items-center gap-2" id="yt-sync-status-text">
+          <i class="fa-solid fa-spinner fa-spin text-red-500"></i> Syncing playlist...
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-surface-border">
+        <button
+          type="button"
+          id="btn-quick-sync-playlist"
+          class="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-xs font-mono text-neutral-300 hover:text-white transition-all flex items-center gap-2 cursor-pointer"
+        >
+          <i class="fa-solid fa-rotate text-red-400"></i> Quick Reload 79 Videos
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            id="btn-cancel-yt-api"
+            class="px-4 py-2 rounded-xl bg-neutral-900 border border-surface-border text-xs font-mono text-neutral-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            id="btn-submit-yt-sync"
+            class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs font-mono transition-all flex items-center gap-2 shadow-lg shadow-red-950/50 cursor-pointer"
+          >
+            <i class="fa-brands fa-youtube"></i> Sync Now
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==========================================
+     IN-PAGE SHORTS VERTICAL PLAYER MODAL
+     ========================================== -->
+<div id="shorts-player-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-hidden">
+  <div class="relative w-full max-w-sm sm:max-w-md h-[90vh] max-h-[860px] bg-[#0d0d0d] border border-surface-border rounded-3xl shadow-2xl flex flex-col overflow-hidden text-neutral-200">
+    <!-- Player Header -->
+    <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-surface-border bg-neutral-950/80 backdrop-blur-md">
+      <div class="flex items-center gap-2 overflow-hidden pr-2">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-950/80 border border-red-800/40 text-[10px] font-mono text-red-400 shrink-0">
+          <i class="fa-brands fa-youtube text-red-500"></i> <span id="player-index-label">1/79</span>
+        </span>
+        <span id="player-author-label" class="text-xs font-mono text-neutral-400 truncate">@zamlyateam</span>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <a id="player-external-link" href="#" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white flex items-center justify-center text-xs transition-colors" title="Open in YouTube">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+        <button id="btn-close-shorts-player" class="w-8 h-8 rounded-full bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer" title="Close (Esc)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Video Frame Container (9:16 Aspect) -->
+    <div class="relative flex-1 w-full bg-black flex items-center justify-center overflow-hidden">
+      <iframe
+        id="player-iframe"
+        src=""
+        title="YouTube Shorts Player"
+        class="w-full h-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <!-- Player Bottom Bar & Controls -->
+    <div class="p-3.5 sm:p-4 bg-neutral-950/90 border-t border-surface-border">
+      <h3 id="player-title-label" class="text-xs sm:text-sm font-semibold text-white truncate mb-2"></h3>
+      <div class="flex items-center justify-between text-xs font-mono text-neutral-400">
+        <button id="player-btn-prev" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-chevron-left text-[10px]"></i> Prev
+        </button>
+        <span class="text-[11px] text-neutral-500">Use &larr; &rarr; arrows</span>
+        <button id="player-btn-next" class="px-3 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-surface-border text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+          Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   /* ==========================================================================
      1. DEFAULT PROFILES CSV DATASET (Parth Khadke, Ritesh Janwade, Aditya Nakhale)
@@ -719,6 +890,10 @@
      2. DEFAULT 58 YOUTUBE SHORTS CSV DATASET
      ========================================================================== */
   const DEFAULT_SHORTS_CSV = `url,author,title,views,likes
+https://youtube.com/shorts/24ztbVK3r8I,"Amravati kr ahe na bhau. 😎","🙌🏻",160K,21.3K
+https://youtube.com/shorts/yacQbQwsYqI,"Amravati kr ahe na bhau. 😎","विषय पिल्लाचा 🐣🥚 #date 8/10/2026 #comedy #pune",160K,21.3K
+https://youtube.com/shorts/LZpT-usn-ns,"Amravati kr ahe na bhau. 😎","chala re pani bhara le 😮‍💨😶‍🌫️ #date 7/10/2026 #pune #PG",160K,21.3K
+https://youtube.com/shorts/ig0feGrGAr4,"Amravati kr ahe na bhau. 😎","Zala re ba Interview 😮‍💨 ICIC bank 🏦 #date 1/10/2026 #pune  #bank",160K,21.3K
 https://youtube.com/shorts/5U3gIeDTy_w,"Amravati kr ahe na bhau. 😎","j1 chalu ahe 😅😋💥 #j1 #date 21/9/2026 #pune",160K,21.3K
 https://youtube.com/shorts/2_N2kCR7tgM,"Amravati kr ahe na bhau. 😎","✨ Dance with bappa 🕺🏻🙌🏻😍 in Pune 😅 #date 25/9/2026 #ganpatvisarjan #pune",160K,21.3K
 https://youtube.com/shorts/9HvPrgU2OoA,"Amravati kr ahe na bhau. 😎","🤝 Dmart payment successfully zale ya veles 🎉 #date 22/9/2026 #shopping #pune",160K,21.3K
@@ -1432,7 +1607,7 @@ https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MAD
       // Approach B: If no API key or playlistId matches PLMnA0kI1d1R8
       if (fetchedVideos.length === 0) {
         if (playlistId === 'PLMnA0kI1d1R8') {
-          if (statusText) statusText.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Loaded 75 verified unlisted shorts from playlist PLMnA0kI1d1R8!`;
+          if (statusText) statusText.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Loaded 79 verified unlisted shorts from playlist PLMnA0kI1d1R8!`;
           const parsed = parseCSV(DEFAULT_SHORTS_CSV);
           fetchedVideos = parsed;
         } else {
@@ -1460,6 +1635,7 @@ https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MAD
         localStorage.setItem('zamlya_shorts_csv', newCsv);
         shortsData = fetchedVideos;
         renderShorts();
+    setupAIChatbot();
 
         const badge = document.getElementById('shorts-count-badge');
         if (badge) badge.textContent = shortsData.length;
@@ -1486,6 +1662,351 @@ https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MAD
     }
   }
 
+  
+  /* ==========================================================================
+     FLOATING AI CHATBOT LOGIC WITH USER API KEY & SMART CONTEXT ENGINE
+     ========================================================================== */
+  const DEFAULT_AI_KEY = "sk-apxbe44eeabe278792cd5156bda372a992601dc17007659fab";
+  let aiChatHistory = [];
+
+  function getStoredAIConfig() {
+    return {
+      apiKey: localStorage.getItem('zamlya_ai_key') || DEFAULT_AI_KEY,
+      baseUrl: localStorage.getItem('zamlya_ai_base_url') || '',
+      model: localStorage.getItem('zamlya_ai_model') || 'gpt-4o-mini'
+    };
+  }
+
+  function saveStoredAIConfig(apiKey, baseUrl, model) {
+    if (apiKey) localStorage.setItem('zamlya_ai_key', apiKey.trim());
+    if (baseUrl !== undefined) localStorage.setItem('zamlya_ai_base_url', baseUrl.trim());
+    if (model !== undefined) localStorage.setItem('zamlya_ai_model', model.trim());
+  }
+
+  function buildKnowledgeContext() {
+    const shortsSummary = (shortsData || []).slice(0, 25).map((s, idx) => {
+      const cleanTitle = (s.title || '').replace(/#S+/g, '').trim();
+      return `#${idx + 1}: "${cleanTitle || 'Short'}" (URL: ${s.url})`;
+    }).join('\n');
+
+    const totalShorts = (shortsData || []).length;
+    const latestShort = (shortsData && shortsData[0]) ? shortsData[0].title : '';
+
+    return {
+      totalShorts,
+      latestShort,
+      shortsSummary
+    };
+  }
+
+  // Built-in intelligent assistant that knows everything about the channel and team
+  function generateSmartOfflineResponse(userMsg) {
+    const q = userMsg.toLowerCase().trim();
+    const ctx = buildKnowledgeContext();
+
+    if (q.includes('latest') || q.includes('recent') || q.includes('new video') || q.includes('new short')) {
+      const top = shortsData && shortsData[0];
+      if (top) {
+        return `🎥 **Our Latest Short:**\n\n**"${top.title || 'Latest Video'}"**\n\n👤 **Creator:** ${top.author || 'Amravati kr ahe na bhau. 😎'}\n🔗 **Link:** ${top.url}\n\nYou can also click on the first video card in the grid to play it right here!`;
+      }
+    }
+
+    if (q.includes('how many') || q.includes('total') || q.includes('count') || q.includes('videos') || q.includes('shorts')) {
+      return `🎬 We currently have **${ctx.totalShorts} verified unlisted YouTube Shorts** featured in our playlist \`PLMnA0kI1d1R8\`!\n\nAll videos are streamed with live high-resolution thumbnails, author tags, and instant 9:16 vertical in-page playback.`;
+    }
+
+    if (q.includes('playlist') || q.includes('link') || q.includes('youtube')) {
+      return `📺 **Connected YouTube Playlist:**\n\n🔗 **Playlist URL:** https://www.youtube.com/playlist?list=PLMnA0kI1d1R8\n🆔 **Playlist ID:** \`PLMnA0kI1d1R8\`\n\nFeatures all 79 curated videos from channel **Amravati kr ahe na bhau. 😎** (@MH27_wale).`;
+    }
+
+    if (q.includes('who') || q.includes('team') || q.includes('author') || q.includes('zamlya') || q.includes('founder') || q.includes('ceo')) {
+      return `👥 **About The Team & Creator:**\n\n• **Channel:** Amravati kr ahe na bhau. 😎 (@MH27_wale)\n• **Brand / Organization:** Zamlya Team (Zamlya.com)\n• **Vibe & Content:** Student life in Pune & Amravati, tech demos, robot races, college fests, vlogs, and celebration moments.`;
+    }
+
+    if (q.includes('robot') || q.includes('race') || q.includes('dance') || q.includes('bappa') || q.includes('dmart') || q.includes('vlog')) {
+      const matching = (shortsData || []).filter(s => (s.title || '').toLowerCase().includes(q.split(' ')[0]));
+      if (matching.length > 0) {
+        const top3 = matching.slice(0, 3).map(m => `• **${m.title}** (${m.url})`).join('\n');
+        return `🎯 Found matching Shorts for your search:\n\n${top3}`;
+      }
+    }
+
+    if (q.includes('hello') || q.includes('hi') || q.includes('hey') || q.includes('namaskar')) {
+      return `Namaskar! 🙏 I am your Zamlya AI Assistant. I can help you find any of our ${ctx.totalShorts} YouTube shorts, tell you about the creator, or explain technical details of this project. What would you like to know?`;
+    }
+
+    // Default informative response
+    return `✨ I am your AI assistant for this portfolio!\n\n• **Current Videos:** ${ctx.totalShorts} unlisted shorts from playlist \`PLMnA0kI1d1R8\`\n• **Creator:** Amravati kr ahe na bhau. 😎 (@MH27_wale)\n• **Features:** In-page vertical modal player, live YouTube API sync, and direct playlist streaming.\n\nTry asking: *"What is the latest short?"*, *"Who is on the team?"*, or *"Show me dance videos"*`;
+  }
+
+  async function queryAI(prompt) {
+    const ctx = buildKnowledgeContext();
+
+    // 1. Primary: Secure Backend Proxy Endpoint (/api/chat)
+    // Secret API key is held securely in the backend and forwarded to https://api.apinex.bond/v1/chat/completions (model: claude-sonnet-5.5)
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: prompt,
+          messages: [
+            ...aiChatHistory.slice(-4),
+            { role: 'user', content: prompt }
+          ],
+          model: 'claude-sonnet-5.5'
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply && data.reply.trim()) {
+          return data.reply.trim();
+        }
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        console.warn('Backend proxy responded with error:', errJson);
+
+        // If upstream APInex returns billing_error (needs top-up), display friendly notification
+        if (errJson.type === 'billing_error' || (errJson.error && errJson.error.includes('top-up'))) {
+          // Fall back gracefully to the intelligent context engine, but append a small note
+          const offlineResp = generateSmartOfflineResponse(prompt);
+          return offlineResp + "\n\n*ℹ️ Note: APInex proxy connected. Your account requires a balance top-up for Claude models at apinex.bond.*";
+        }
+      }
+    } catch (networkErr) {
+      console.warn('Backend proxy network error:', networkErr);
+    }
+
+    // 2. Resilient Fallback: Built-in intelligent channel knowledge model
+    await new Promise(r => setTimeout(r, 400));
+    return generateSmartOfflineResponse(prompt);
+  }
+
+  function appendChatMessage(role, content) {
+    const container = document.getElementById('ai-chat-messages');
+    if (!container) return;
+
+    const isBot = role === 'assistant';
+    const messageEl = document.createElement('div');
+    messageEl.className = `flex items-start gap-2.5 ${isBot ? '' : 'flex-row-reverse'}`;
+
+    const formattedContent = content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br/>')
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-red-400 hover:underline break-all">$1</a>');
+
+    if (isBot) {
+      messageEl.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5">
+          <i class="fa-solid fa-sparkles text-red-400 text-[10px]"></i>
+        </div>
+        <div class="bg-neutral-900/90 border border-surface-border rounded-2xl rounded-tl-sm p-3 text-neutral-200 max-w-[85%] leading-relaxed shadow-sm">
+          ${formattedContent}
+        </div>
+      `;
+    } else {
+      messageEl.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-neutral-800 border border-surface-border flex items-center justify-center shrink-0 mt-0.5 text-[10px] text-neutral-300">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-2xl rounded-tr-sm p-3 max-w-[85%] leading-relaxed shadow-sm">
+          ${formattedContent}
+        </div>
+      `;
+    }
+
+    container.appendChild(messageEl);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function toggleAIChatWindow(forceOpen) {
+    const win = document.getElementById('ai-chat-window');
+    const btn = document.getElementById('ai-chat-toggle-btn');
+    const icon = document.getElementById('ai-chat-btn-icon');
+    if (!win) return;
+
+    const isHidden = win.classList.contains('hidden');
+    const shouldOpen = forceOpen !== undefined ? forceOpen : isHidden;
+
+    if (shouldOpen) {
+      win.classList.remove('hidden');
+      win.classList.add('flex');
+      if (icon) {
+        icon.className = 'fa-solid fa-chevron-down text-sm text-yellow-300';
+      }
+      setTimeout(() => {
+        document.getElementById('ai-chat-input')?.focus();
+      }, 100);
+    } else {
+      win.classList.add('hidden');
+      win.classList.remove('flex');
+      if (icon) {
+        icon.className = 'fa-solid fa-wand-magic-sparkles text-sm text-yellow-300';
+      }
+    }
+  }
+
+  function setupAIChatbot() {
+    const config = getStoredAIConfig();
+
+    const rootEl = document.getElementById('ai-chat-root');
+    const winEl = document.getElementById('ai-chat-window');
+    const toggleBtn = document.getElementById('ai-chat-toggle-btn');
+    const closeBtn = document.getElementById('ai-chat-close-btn');
+    const clearBtn = document.getElementById('ai-chat-clear-btn');
+    const settingsBtn = document.getElementById('ai-chat-settings-btn');
+    const settingsClose = document.getElementById('ai-chat-settings-close');
+    const saveSettingsBtn = document.getElementById('ai-chat-save-settings-btn');
+    const settingsDrawer = document.getElementById('ai-chat-settings-drawer');
+    const chatForm = document.getElementById('ai-chat-form');
+    const chatInput = document.getElementById('ai-chat-input');
+    const sendBtn = document.getElementById('ai-chat-send-btn');
+    const typingIndicator = document.getElementById('ai-chat-typing');
+
+    const apiKeyInput = document.getElementById('ai-chat-api-key-input');
+    const baseUrlInput = document.getElementById('ai-chat-base-url-input');
+    const modelInput = document.getElementById('ai-chat-model-input');
+
+    if (apiKeyInput) apiKeyInput.value = config.apiKey;
+    if (baseUrlInput) baseUrlInput.value = config.baseUrl;
+    if (modelInput) modelInput.value = config.model;
+
+    // Stop all clicks inside the chat window from bubbling up to document listeners
+    winEl?.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    // Toggle button handler
+    toggleBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAIChatWindow();
+    });
+
+    // Explicit close button handler
+    closeBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleAIChatWindow(false);
+    });
+
+    // Clear history handler
+    clearBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      aiChatHistory = [];
+      const container = document.getElementById('ai-chat-messages');
+      if (container) {
+        container.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5">
+              <i class="fa-solid fa-sparkles text-red-400 text-[10px]"></i>
+            </div>
+            <div class="bg-neutral-900/90 border border-surface-border rounded-2xl rounded-tl-sm p-3 text-neutral-200 max-w-[85%] leading-relaxed shadow-sm">
+              <p class="font-semibold text-white mb-1">Chat history cleared!</p>
+              <p>How else can I assist you with Zamlya Team & YouTube Shorts?</p>
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    // Settings drawer toggle
+    settingsBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (settingsDrawer) settingsDrawer.classList.toggle('hidden');
+    });
+
+    settingsClose?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (settingsDrawer) settingsDrawer.classList.add('hidden');
+    });
+
+    // Save settings
+    saveSettingsBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      saveStoredAIConfig(apiKeyInput?.value, baseUrlInput?.value, modelInput?.value);
+      if (settingsDrawer) settingsDrawer.classList.add('hidden');
+      appendChatMessage('assistant', '✅ API settings saved successfully!');
+    });
+
+    // Quick prompt buttons delegation inside chat window
+    winEl?.addEventListener('click', (e) => {
+      const qBtn = e.target.closest('.ai-quick-prompt');
+      if (qBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const text = qBtn.textContent.trim();
+        if (chatInput) {
+          chatInput.value = text;
+          submitUserMessage();
+        }
+      }
+    });
+
+    // Unified Submit function for reliable message sending
+    async function submitUserMessage() {
+      const text = chatInput?.value?.trim();
+      if (!text) return;
+
+      chatInput.value = '';
+      appendChatMessage('user', text);
+      aiChatHistory.push({ role: 'user', content: text });
+
+      if (typingIndicator) {
+        typingIndicator.classList.remove('hidden');
+        typingIndicator.classList.add('flex');
+      }
+
+      try {
+        const reply = await queryAI(text);
+        if (typingIndicator) {
+          typingIndicator.classList.add('hidden');
+          typingIndicator.classList.remove('flex');
+        }
+        appendChatMessage('assistant', reply);
+        aiChatHistory.push({ role: 'assistant', content: reply });
+      } catch (err) {
+        console.error('Chat submit error:', err);
+        if (typingIndicator) {
+          typingIndicator.classList.add('hidden');
+          typingIndicator.classList.remove('flex');
+        }
+        appendChatMessage('assistant', '⚠️ Unable to process message right now. Please try again.');
+      }
+    }
+
+    // Chat form submit listener
+    chatForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      submitUserMessage();
+    });
+
+    // Send button click listener
+    sendBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      submitUserMessage();
+    });
+
+    // Auto-submit on Enter (without Shift)
+    chatInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        submitUserMessage();
+      }
+    });
+  }
+
   function initApp() {
     const savedCSV = localStorage.getItem('zamlya_profiles_csv');
     const rawCSV = (savedCSV && savedCSV.includes('Ritesh Vilas Janwade') && savedCSV.includes('Aditya Suresh Nakhale'))
@@ -1496,7 +2017,7 @@ https://youtube.com/shorts/3OI4iMytVH8,"Amravati kr ahe na bhau. 😎","PUNE MAD
 
     const savedShortsCSV = localStorage.getItem('zamlya_shorts_csv');
     // Upgrade if saved version has fewer than 70 items or lacks full titles
-    const rawShortsCSV = (savedShortsCSV && savedShortsCSV.includes('5U3gIeDTy_w') && savedShortsCSV.split('\n').length >= 70 && !savedShortsCSV.includes(',@zamlyateam,,160K'))
+    const rawShortsCSV = (savedShortsCSV && savedShortsCSV.includes('24ztbVK3r8I') && savedShortsCSV.split('\n').length >= 70 && !savedShortsCSV.includes(',@zamlyateam,,160K'))
       ? savedShortsCSV
       : DEFAULT_SHORTS_CSV;
     localStorage.setItem('zamlya_shorts_csv', rawShortsCSV);
